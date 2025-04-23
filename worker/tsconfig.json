@@ -10,6 +10,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "../dist/worker",
+    "rootDir": "./src",
     "baseUrl": "./src",
     "incremental": true,
     "skipLibCheck": true,
