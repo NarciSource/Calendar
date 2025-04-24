@@ -13,7 +13,7 @@ services:
     image: pickme/reminder-notification
     build:
       context: . # 현재 디렉토리의 Dockerfile로 빌드
-      dockerfile: Dockerfile.notification # notification Dockerfile 사용
+      dockerfile: ./notification/Dockerfile # notification Dockerfile 사용
     container_name: notification-microservice
     networks: # 지정 네트워크에 연결
       - reminder-service-network
@@ -33,7 +33,7 @@ services:
     image: pickme/reminder-worker
     build:
       context: .
-      dockerfile: Dockerfile.worker
+      dockerfile: ./worker/Dockerfile
     container_name: worker-microservice
     networks:
       - reminder-service-network

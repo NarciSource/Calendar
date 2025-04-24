@@ -1,23 +1,23 @@
 {
-    "files": [],
-    "include": ["../notification/src/**/*.ts", "../worker/src/**/*.ts", "./test/**/*.ts"],
-    "exclude": ["node_modules", "dist"],
+  "files": [],
+  "include": ["../notification/src/**/*.ts", "../worker/src/**/*.ts", "./test/**/*.ts"],
+  "exclude": ["node_modules", "dist"],
 
-    "compilerOptions": {
-        "experimentalDecorators": true, // 데코레이터 기능 활성화
-        "emitDecoratorMetadata": true, // 데코레이터 메타데이터를 생성
-        "paths": {
-            "@notification/*": ["./notification/src/*"],
-            "@worker/*": ["./worker/src/*"]
-        }
+  "compilerOptions": {
+    "experimentalDecorators": true, // 데코레이터 기능 활성화
+    "emitDecoratorMetadata": true, // 데코레이터 메타데이터를 생성
+    "paths": {
+      "@notification/*": ["./notification/src/*"],
+      "@worker/*": ["./worker/src/*"]
+    }
+  },
+
+  "references": [
+    {
+      "path": "notification"
     },
-
-    "references": [
-        {
-            "path": "notification"
-        },
-        {
-            "path": "worker"
-        }
-    ]
+    {
+      "path": "worker"
+    }
+  ]
 }

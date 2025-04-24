@@ -55,9 +55,9 @@
 > 프로젝트에서 사용되는 API 명세서입니다.  
 > 이 명세서는 매 릴리즈 업데이트 시 자동으로 최신 상태로 배포됩니다.
 
-| [![Swagger](https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swagger/swagger-original.svg)](https://daily1hour.github.io/PickMe-Reminder-Service/test/report) |
+| [![Swagger](https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swagger/swagger-original.svg)](https://daily1hour.github.io/PickMe-Reminder-Service/) |
 | --- |
-| &nbsp;&nbsp;&nbsp;[API 명세서 바로가기](https://daily1hour.github.io/PickMe-Reminder-Service/test/report)&nbsp;&nbsp;&nbsp; |
+| &nbsp;&nbsp;&nbsp;[API 명세서 바로가기](https://daily1hour.github.io/PickMe-Reminder-Service/)&nbsp;&nbsp;&nbsp; |
 
 ### 📘 타입 문서
 

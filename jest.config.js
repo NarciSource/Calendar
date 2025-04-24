@@ -10,7 +10,7 @@ module.exports = {
         "<rootDir>/notification",
         "<rootDir>/worker",
         // 루트 e2e
-        "<rootDir>/test"
+        "<rootDir>/test",
     ],
 
     // 커버리지 수집 설정
