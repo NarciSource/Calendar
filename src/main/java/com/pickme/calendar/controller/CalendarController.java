@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pickme.calendar.dto.delete.DeleteApiResponseDto;
-import com.pickme.calendar.dto.get.GetCalendarDto;
-import com.pickme.calendar.dto.get.GetInterviewDto;
-import com.pickme.calendar.dto.post.PostApiResponseDto;
-import com.pickme.calendar.dto.post.PostInterviewDetailDto;
-import com.pickme.calendar.dto.put.PutApiResponseDto;
-import com.pickme.calendar.dto.put.PutInterviewDetailDto;
+import com.pickme.calendar.dto.request.GetInterviewDto;
+import com.pickme.calendar.dto.request.PostInterviewDto;
+import com.pickme.calendar.dto.request.PutInterviewDto;
+import com.pickme.calendar.dto.response.CalendarDto;
+import com.pickme.calendar.dto.response.ResponseDto;
 import com.pickme.calendar.service.CalendarService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +45,7 @@ public class CalendarController {
 	// 해당 사용자 면접 일정 전체 조회
 	@Operation(summary = "면접 일정 전체&조건 조회", description = "면접 일정 전체 조회 & 특정 조건에 해당하는 면접 일정 조회")
 	@ApiResponse(responseCode = "200", description = "조회 요청 성공",
-		content = @Content(schema = @Schema(implementation = GetCalendarDto.class)))
+		content = @Content(schema = @Schema(implementation = CalendarDto.class)))
 	@GetMapping("/interviews")
 	public ResponseEntity<?> interviewsList(HttpServletRequest request,
 		@Parameter(description = "회사 이름 (필터링 조건)", example = "앙떼띠")
@@ -77,21 +75,21 @@ public class CalendarController {
 	// 면접 일정 추가
 	@Operation(summary = "면접 일정 추가", description = "새로운 면접 일정 추가")
 	@ApiResponse(responseCode = "200", description = "면접 일정 추가 성공",
-		content = @Content(schema = @Schema(implementation = PostApiResponseDto.class)))
+		content = @Content(schema = @Schema(implementation = ResponseDto.class)))
 	@PostMapping("/interview")
 	public ResponseEntity<?> createInterviewSchedule(HttpServletRequest request,
-		@RequestBody PostInterviewDetailDto postInterviewDetailDto) {
+		@RequestBody PostInterviewDto postInterviewDto) {
 
 		String clientId = (String)request.getAttribute("clientId");
 
-		return calendarService.registerInterviewSchedule(postInterviewDetailDto, clientId);
+		return calendarService.registerInterviewSchedule(postInterviewDto, clientId);
 
 	}
 
 	// 면접 일정 삭제
 	@Operation(summary = "면접 일정 삭제", description = "interviewDetailId에 해당하는 면접 일정 삭제")
 	@ApiResponse(responseCode = "200", description = "면접 일정 삭제 성공",
-		content = @Content(schema = @Schema(implementation = DeleteApiResponseDto.class)))
+		content = @Content(schema = @Schema(implementation = ResponseDto.class)))
 	@DeleteMapping("/interview")
 	public ResponseEntity<?> deleteInterviewSchedule(
 		@Parameter(description = "면접 일정 ID (필터링 조건)", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
@@ -103,14 +101,14 @@ public class CalendarController {
 	// 특정 면접 일정 수정
 	@Operation(summary = "면접 일정 수정", description = "interviewDetailId에 해당하는 면접 일정 수정")
 	@ApiResponse(responseCode = "200", description = "면접 일정 수정 성공",
-		content = @Content(schema = @Schema(implementation = PutApiResponseDto.class)))
+		content = @Content(schema = @Schema(implementation = ResponseDto.class)))
 	@PutMapping("/interview")
 	public ResponseEntity<?> putInterviewSchedule(
 		@Parameter(description = "면접 일정 ID (필터링 조건)", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
 		@RequestParam String interviewDetailId,
-		@RequestBody PutInterviewDetailDto putInterviewDetailDto) {
+		@RequestBody PutInterviewDto putInterviewDto) {
 
-		return calendarService.putInterviewSchedule(interviewDetailId, putInterviewDetailDto);
+		return calendarService.putInterviewSchedule(interviewDetailId, putInterviewDto);
 	}
 
 }
