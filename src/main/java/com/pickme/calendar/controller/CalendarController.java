@@ -55,9 +55,8 @@ public class CalendarController {
 
 		String clientId = (String)request.getAttribute("clientId");
 
-		log.info("clientId: {}", clientId);
-
-		return calendarService.interviewsList(clientId, name, yearMonth);
+		var calendarDto = calendarService.interviewsList(clientId, name, yearMonth);
+		return ResponseEntity.ok(calendarDto);
 	}
 
 	// 해당 사용자의 interviewDetailId에 해당하는 면접 일정 조회
@@ -69,7 +68,8 @@ public class CalendarController {
 		@Parameter(description = "면접 일정 ID", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
 		@RequestParam String interviewDetailId) {
 
-		return calendarService.getInterview(interviewDetailId);
+		var getInterviewDto = calendarService.getInterview(interviewDetailId);
+		return ResponseEntity.ok(getInterviewDto);
 	}
 
 	// 면접 일정 추가
@@ -82,8 +82,8 @@ public class CalendarController {
 
 		String clientId = (String)request.getAttribute("clientId");
 
-		return calendarService.registerInterviewSchedule(postInterviewDto, clientId);
-
+		boolean success = calendarService.registerInterviewSchedule(postInterviewDto, clientId);
+		return ResponseEntity.ok(success);
 	}
 
 	// 면접 일정 삭제
@@ -95,7 +95,8 @@ public class CalendarController {
 		@Parameter(description = "면접 일정 ID (필터링 조건)", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
 		@RequestParam String interviewDetailId) {
 
-		return calendarService.deleteInterviewSchedule(interviewDetailId);
+		boolean success = calendarService.deleteInterviewSchedule(interviewDetailId);
+		return ResponseEntity.ok(success);
 	}
 
 	// 특정 면접 일정 수정
@@ -108,7 +109,8 @@ public class CalendarController {
 		@RequestParam String interviewDetailId,
 		@RequestBody PutInterviewDto putInterviewDto) {
 
-		return calendarService.putInterviewSchedule(interviewDetailId, putInterviewDto);
+		boolean success = calendarService.putInterviewSchedule(interviewDetailId, putInterviewDto);
+		return ResponseEntity.ok(success);
 	}
 
 }
