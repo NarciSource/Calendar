@@ -33,13 +33,10 @@ public class CalendarService {
 	// 해당 사용자의 필터 조건에 맞는 면접 일정 조회
 	public CalendarDto interviewsList(String clientId, String name, YearMonth yearMonth) {
 
-		// 사용자의 면접 일정이 존재하는지 확인
-		if (!calendarRepository.existsByClientId(clientId)) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
-
 		// 사용자의 면접 일정 전체를 Calendar 객체로 가져옴
-		Calendar calendar = calendarRepository.findByClientId(clientId);
+		Calendar calendar = calendarRepository
+			.findByClientId(clientId)
+			.orElseThrow(() -> new CustomException(ErrorCode.DOCUMENT_NOT_FOUND));
 		// 주어진 조건(현재는 name)으로 필터링된 interviewDetails 리스트를 가져옴
 		List<Calendar.InterviewDetails> interviewDetails = calendarMongoQueryProcessor.filterInterviewDetails(
 			calendar, name, yearMonth);
@@ -60,18 +57,14 @@ public class CalendarService {
 
 	// interviewDetailId에 해당하는 면접 일정 조회
 	public GetInterviewDto getInterview(String interviewDetailId) {
-		Calendar calendar = calendarRepository.findByInterviewDetails_interviewDetailId(interviewDetailId);
-		if (calendar == null) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
+		Calendar calendar = calendarRepository
+			.findByInterviewDetails_interviewDetailId(interviewDetailId)
+			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		// interviewDetailId에 해당하는 일정 가져옴
-		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor.findInterviewDetail(calendar,
-			interviewDetailId);
-
-		if (interviewDetail == null) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
+		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor
+			.findInterviewDetail(calendar, interviewDetailId)
+			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		GetInterviewDto getInterviewDto = calendarMapper.interviewDetailToGetInterviewDto(interviewDetail);
 		getInterviewDto.setClientId(calendar.getClientId());
@@ -82,18 +75,8 @@ public class CalendarService {
 	// 사용자의 면접 일정 추가
 	public boolean registerInterviewSchedule(PostInterviewDto postInterviewDto, String clientId) {
 
-		Calendar calendar;
-
-		// 사용자 면접 일정 정보가 존재하는 지 확인
-		if (calendarRepository.existsByClientId(clientId)) {
-			// 사용자의 면접 일정을 Calendar 객체로 가져옴
-			calendar = calendarRepository.findByClientId(clientId);
-		} else {
-			// 사용자의 면접 일정이 없다면 새로운 Calendar 객체 생성
-			calendar = new Calendar();
-			calendar.setClientId(clientId); // 사용자 정보 설정
-			calendar.setInterviewDetails(new ArrayList<>()); // 빈 면접 일정 리스트 초기화
-		}
+		Calendar calendar = calendarRepository.findByClientId(clientId)
+			.orElseGet(() -> new Calendar(clientId, new ArrayList<>()));
 
 		// 새로운 InterviewsDetails 객체 생성
 		Calendar.InterviewDetails interviewDetails = new Calendar.InterviewDetails();
@@ -117,17 +100,18 @@ public class CalendarService {
 	// 사용자의 면접 일정 삭제
 	public boolean deleteInterviewSchedule(String interviewDetailId) {
 
-		Calendar calendar = calendarRepository.findByInterviewDetails_interviewDetailId(interviewDetailId);
+		Calendar calendar = calendarRepository
+			.findByInterviewDetails_interviewDetailId(interviewDetailId)
+			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
-		if (calendar == null) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
+		Calendar.InterviewDetails details =
+			calendarMongoQueryProcessor.findInterviewDetail(calendar, interviewDetailId)
+				.orElseThrow(() ->
+					new CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
+				);
 
-		boolean isExist = calendarMongoQueryProcessor.deleteInterview(calendar, interviewDetailId);
+		calendarMongoQueryProcessor.deleteInterview(calendar, details);
 
-		if (!isExist) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
 		return true;
 	}
 
@@ -135,18 +119,13 @@ public class CalendarService {
 	public boolean putInterviewSchedule(String interviewDetailId,
 		PutInterviewDto putInterviewDto) {
 
-		Calendar calendar = calendarRepository.findByInterviewDetails_interviewDetailId(interviewDetailId);
+		Calendar calendar = calendarRepository
+			.findByInterviewDetails_interviewDetailId(interviewDetailId)
+			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
-		if (calendar == null) {
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
-
-		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor.findInterviewDetail(calendar,
-			interviewDetailId);
-
-		if (interviewDetail == null) { // 면접 일정이 존재하는 경우
-			throw new CustomException(ErrorCode.DOCUMENT_NOT_FOUND);
-		}
+		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor
+			.findInterviewDetail(calendar, interviewDetailId)
+			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		// 수정할 데이터를 받아온 DTO를 면접 일정 객체에 매핑하여 수정
 		calendarMapper.putInterviewDetailDtoToInterviewDetail(putInterviewDto, interviewDetail);
