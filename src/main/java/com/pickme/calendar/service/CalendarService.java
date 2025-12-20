@@ -41,14 +41,11 @@ public class CalendarService {
 		List<InterviewDetail> interviewDetails = calendarMongoQueryProcessor.filterInterviewDetails(
 			calendar, name, yearMonth);
 
-		// 응답을 위한 GetCalendarDTO 객체 생성
-		CalendarDto calendarDto = new CalendarDto();
-		// Calendar 엔티티의 정보를 GetCalendarDTO로 매핑 (id, clientId 등)
-		calendarMapper.calendarToGetCalendarDto(calendar, calendarDto);
+		// Calendar 엔티티의 정보를 GetCalendarDTO로 매핑
+		CalendarDto calendarDto = calendarMapper.toDto(calendar);
 
 		// interviewDetails 리스트를 GetInterviewDetailDTO 객체로 변환
-		List<GetInterviewDto> getInterviewListDtoList =
-			calendarMapper.interviewDetailsToGetInterviewDetailsDto(interviewDetails);
+		List<GetInterviewDto> getInterviewListDtoList = calendarMapper.toDto(interviewDetails);
 		// 변환된 interviewDetails 리스트를 GetCalendarDTO 객체에 설정
 		calendarDto.setInterviewDetails(getInterviewListDtoList);
 
@@ -66,7 +63,7 @@ public class CalendarService {
 			.findInterviewDetail(calendar, interviewDetailId)
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
-		GetInterviewDto getInterviewDto = calendarMapper.interviewDetailToGetInterviewDto(interviewDetail);
+		GetInterviewDto getInterviewDto = calendarMapper.toDto(interviewDetail);
 		getInterviewDto.setClientId(calendar.getClientId());
 
 		return getInterviewDto;
@@ -82,7 +79,7 @@ public class CalendarService {
 		InterviewDetail interviewDetail = InterviewDetail.builder().build();
 
 		// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetails 객체로 변환
-		calendarMapper.postInterviewDetailDtoToInterviewDetail(postInterviewDto, interviewDetail);
+		calendarMapper.toEntity(postInterviewDto, interviewDetail);
 		// 변환된 interviewDetail을 Calendar의 interviewDetails 리스트에 추가
 		calendar.getInterviewDetails().add(interviewDetail);
 		// 업데이트된 Calendar 객체를 데이터베이스에 저장
@@ -121,7 +118,7 @@ public class CalendarService {
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		// 수정할 데이터를 받아온 DTO를 면접 일정 객체에 매핑하여 수정
-		calendarMapper.putInterviewDetailDtoToInterviewDetail(putInterviewDto, interviewDetail);
+		calendarMapper.toEntity(putInterviewDto, interviewDetail);
 		interviewDetail.setUpdatedAt(LocalDateTime.now());
 		// 수정된 Calendar 객체를 데이터베이스에 저장
 		calendarRepository.save(calendar);
