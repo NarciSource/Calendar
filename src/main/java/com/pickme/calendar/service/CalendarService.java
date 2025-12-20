@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,7 @@ import com.pickme.calendar.dto.request.PostInterviewDto;
 import com.pickme.calendar.dto.request.PutInterviewDto;
 import com.pickme.calendar.dto.response.CalendarDto;
 import com.pickme.calendar.entity.Calendar;
+import com.pickme.calendar.entity.InterviewDetail;
 import com.pickme.calendar.exception.CustomException;
 import com.pickme.calendar.exception.ErrorCode;
 import com.pickme.calendar.repository.CalendarMongoQueryProcessor;
@@ -38,7 +38,7 @@ public class CalendarService {
 			.findByClientId(clientId)
 			.orElseThrow(() -> new CustomException(ErrorCode.DOCUMENT_NOT_FOUND));
 		// 주어진 조건(현재는 name)으로 필터링된 interviewDetails 리스트를 가져옴
-		List<Calendar.InterviewDetails> interviewDetails = calendarMongoQueryProcessor.filterInterviewDetails(
+		List<InterviewDetail> interviewDetails = calendarMongoQueryProcessor.filterInterviewDetails(
 			calendar, name, yearMonth);
 
 		// 응답을 위한 GetCalendarDTO 객체 생성
@@ -62,7 +62,7 @@ public class CalendarService {
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		// interviewDetailId에 해당하는 일정 가져옴
-		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor
+		InterviewDetail interviewDetail = calendarMongoQueryProcessor
 			.findInterviewDetail(calendar, interviewDetailId)
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
@@ -79,18 +79,12 @@ public class CalendarService {
 			.orElseGet(() -> new Calendar(clientId, new ArrayList<>()));
 
 		// 새로운 InterviewsDetails 객체 생성
-		Calendar.InterviewDetails interviewDetails = new Calendar.InterviewDetails();
-		// InterviewsDetails 객체의 interviewDetailId 값 설정
-		interviewDetails.setInterviewDetailId(UUID.randomUUID().toString());
-
-		interviewDetails.setCreatedAt(LocalDateTime.now());
-
-		interviewDetails.setUpdatedAt(LocalDateTime.now());
+		InterviewDetail interviewDetail = InterviewDetail.builder().build();
 
 		// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetails 객체로 변환
-		calendarMapper.postInterviewDetailDtoToInterviewDetails(postInterviewDto, interviewDetails);
-		// 변환된 interviewDetails를 Calendar의 interviewDetails 리스트에 추가
-		calendar.getInterviewDetails().add(interviewDetails);
+		calendarMapper.postInterviewDetailDtoToInterviewDetail(postInterviewDto, interviewDetail);
+		// 변환된 interviewDetail을 Calendar의 interviewDetails 리스트에 추가
+		calendar.getInterviewDetails().add(interviewDetail);
 		// 업데이트된 Calendar 객체를 데이터베이스에 저장
 		calendarRepository.save(calendar);
 
@@ -104,26 +98,25 @@ public class CalendarService {
 			.findByInterviewDetails_interviewDetailId(interviewDetailId)
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
-		Calendar.InterviewDetails details =
+		InterviewDetail interviewDetail =
 			calendarMongoQueryProcessor.findInterviewDetail(calendar, interviewDetailId)
 				.orElseThrow(() ->
 					new CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
 				);
 
-		calendarMongoQueryProcessor.deleteInterview(calendar, details);
+		calendarMongoQueryProcessor.deleteInterview(calendar, interviewDetail);
 
 		return true;
 	}
 
 	// 사용자의 면접 일정 수정
-	public boolean putInterviewSchedule(String interviewDetailId,
-		PutInterviewDto putInterviewDto) {
+	public boolean putInterviewSchedule(String interviewDetailId, PutInterviewDto putInterviewDto) {
 
 		Calendar calendar = calendarRepository
 			.findByInterviewDetails_interviewDetailId(interviewDetailId)
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
-		Calendar.InterviewDetails interviewDetail = calendarMongoQueryProcessor
+		InterviewDetail interviewDetail = calendarMongoQueryProcessor
 			.findInterviewDetail(calendar, interviewDetailId)
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 

@@ -11,14 +11,15 @@ import com.pickme.calendar.dto.request.PostInterviewDto;
 import com.pickme.calendar.dto.request.PutInterviewDto;
 import com.pickme.calendar.dto.response.CalendarDto;
 import com.pickme.calendar.entity.Calendar;
+import com.pickme.calendar.entity.InterviewDetail;
 
 @Mapper(componentModel = "spring") // Spring Bean으로 등록
 public interface CalendarMapper {
 
-	// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetails 객체로 변환
+	// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetail 객체로 변환
 	@Mapping(target = "interviewDetailId", ignore = true)
-	void postInterviewDetailDtoToInterviewDetails(PostInterviewDto postInterviewDto,
-		@MappingTarget Calendar.InterviewDetails interviewDetails);
+	void postInterviewDetailDtoToInterviewDetail(PostInterviewDto postInterviewDto,
+		@MappingTarget InterviewDetail interviewDetail);
 
 	// Calendar 엔티티의 정보를 GetCalendarDTO로 매핑 (id, clientId)
 	@Mapping(target = "interviewDetails", ignore = true)
@@ -26,13 +27,13 @@ public interface CalendarMapper {
 
 	// interviewDetails 리스트를 GetInterviewDetailDTO 객체로 변환
 	List<GetInterviewDto> interviewDetailsToGetInterviewDetailsDto(
-		List<Calendar.InterviewDetails> interviewDetails);
+		List<InterviewDetail> interviewDetails);
 
 	// interviewDetail을 GetInterviewDTO 객체로 변환
-	GetInterviewDto interviewDetailToGetInterviewDto(Calendar.InterviewDetails interviewDetail);
+	GetInterviewDto interviewDetailToGetInterviewDto(InterviewDetail interviewDetail);
 
 	// 전달받은 DTO(PutInterviewDetailDTO)를 InterviewDetails 객체로 변환
 	@Mapping(target = "interviewDetailId", ignore = true)
 	void putInterviewDetailDtoToInterviewDetail(PutInterviewDto putInterviewDto,
-		@MappingTarget Calendar.InterviewDetails interviewDetails);
+		@MappingTarget InterviewDetail interviewDetail);
 }
