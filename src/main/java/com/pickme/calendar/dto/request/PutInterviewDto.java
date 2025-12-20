@@ -6,10 +6,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pickme.calendar.dto.request.payload.CompanyDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
-@Schema(description = "면접 일정을 수정")
+@Getter
+@Builder
+@Schema(description = "면접 일정 수정")
 public class PutInterviewDto {
 	private CompanyDto company;
 

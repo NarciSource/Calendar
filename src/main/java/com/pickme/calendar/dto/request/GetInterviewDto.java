@@ -6,14 +6,13 @@ import java.util.Date;
 import com.pickme.calendar.dto.request.payload.CompanyDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
-@Schema(description = "면접 일정을 조회")
+@Getter
+@Builder
+@Schema(description = "면접 일정 조회")
 public class GetInterviewDto {
-	@Schema(description = "사용자 ID", example = "60011bt0ev46lpb51pbnpugpn7")
-	private String clientId;
-
 	@Schema(description = "면접 일정 ID", example = "fd3c55f5-07fe-4d0c-94d3-69cbaeb2646c")
 	private String interviewDetailId;
 

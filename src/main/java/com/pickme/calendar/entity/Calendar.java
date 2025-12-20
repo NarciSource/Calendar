@@ -9,9 +9,9 @@ import org.springframework.lang.NonNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Document(collection = "calendar")
 @Getter
 @RequiredArgsConstructor
+@Document(collection = "calendar")
 public class Calendar {
 
 	@Id

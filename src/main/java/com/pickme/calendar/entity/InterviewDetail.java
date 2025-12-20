@@ -7,18 +7,21 @@ import java.util.UUID;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class InterviewDetail {
 
 	@Indexed
-	private String interviewDetailId;
+	@Builder.Default
+	private final String interviewDetailId = UUID.randomUUID().toString();
 
-	private LocalDateTime createdAt;
+	@Builder.Default
+	private final LocalDateTime createdAt = LocalDateTime.now();
 
-	private LocalDateTime updatedAt;
+	@Builder.Default
+	private LocalDateTime updatedAt = LocalDateTime.now();
 
 	private Company company;
 
@@ -30,15 +33,12 @@ public class InterviewDetail {
 
 	private String description;
 
-	@Builder
-	private InterviewDetail() {
-		this.interviewDetailId = UUID.randomUUID().toString();
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = this.createdAt;
+	public void touch() {
+		this.updatedAt = LocalDateTime.now();
 	}
 
-	@Data
-	@NoArgsConstructor
+	@Getter
+	@Builder
 	public static class Company {
 
 		private String name;

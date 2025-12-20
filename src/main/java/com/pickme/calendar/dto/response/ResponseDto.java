@@ -2,9 +2,11 @@ package com.pickme.calendar.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 @Schema(description = "응답")
 @AllArgsConstructor
 public class ResponseDto {

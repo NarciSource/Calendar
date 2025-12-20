@@ -1,6 +1,5 @@
 package com.pickme.calendar.service;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,6 @@ public class CalendarService {
 			.orElseThrow(() -> new CustomException((ErrorCode.DOCUMENT_NOT_FOUND)));
 
 		GetInterviewDto getInterviewDto = calendarMapper.toDto(interviewDetail);
-		getInterviewDto.setClientId(calendar.getClientId());
 
 		return getInterviewDto;
 	}
@@ -75,11 +73,8 @@ public class CalendarService {
 		Calendar calendar = calendarRepository.findByClientId(clientId)
 			.orElseGet(() -> new Calendar(clientId, new ArrayList<>()));
 
-		// 새로운 InterviewsDetails 객체 생성
-		InterviewDetail interviewDetail = InterviewDetail.builder().build();
-
-		// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetails 객체로 변환
-		calendarMapper.toEntity(postInterviewDto, interviewDetail);
+		// 전달받은 DTO(PostInterviewDetailDTO)를 InterviewDetail 객체로 변환
+		InterviewDetail interviewDetail = calendarMapper.toEntity(postInterviewDto);
 		// 변환된 interviewDetail을 Calendar의 interviewDetails 리스트에 추가
 		calendar.getInterviewDetails().add(interviewDetail);
 		// 업데이트된 Calendar 객체를 데이터베이스에 저장
@@ -119,7 +114,8 @@ public class CalendarService {
 
 		// 수정할 데이터를 받아온 DTO를 면접 일정 객체에 매핑하여 수정
 		calendarMapper.toEntity(putInterviewDto, interviewDetail);
-		interviewDetail.setUpdatedAt(LocalDateTime.now());
+		// 수정 업데이트
+		interviewDetail.touch();
 		// 수정된 Calendar 객체를 데이터베이스에 저장
 		calendarRepository.save(calendar);
 
