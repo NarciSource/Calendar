@@ -3,7 +3,6 @@ package com.pickme.calendar.config.security
 import com.pickme.calendar.service.JwtService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.lang.NonNull
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 
@@ -11,9 +10,9 @@ import org.springframework.web.servlet.HandlerInterceptor
 class JwtInterceptor(val jwtService: JwtService) : HandlerInterceptor {
 
     override fun preHandle(
-        @NonNull request: HttpServletRequest,
-        @NonNull response: HttpServletResponse,
-        @NonNull handler: Any
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any
     ): Boolean {
         /*
 		 * HttpServletRequest request:

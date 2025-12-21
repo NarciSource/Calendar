@@ -10,15 +10,11 @@ import com.pickme.calendar.exception.ErrorCode
 import com.pickme.calendar.repository.CalendarMongoQueryProcessor
 import com.pickme.calendar.repository.CalendarRepository
 import com.pickme.calendar.service.mapper.CalendarMapper
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.function.Supplier
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 class CalendarService(
     val calendarRepository: CalendarRepository,
     val calendarMapper: CalendarMapper,

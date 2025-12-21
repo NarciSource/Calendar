@@ -2,8 +2,6 @@ package com.pickme.calendar.repository
 
 import com.pickme.calendar.entity.Calendar
 import com.pickme.calendar.entity.InterviewDetail
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -12,8 +10,6 @@ import java.time.ZoneId
 import java.util.*
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 class CalendarMongoQueryProcessor(
     val mongoTemplate: MongoTemplate
 ) {
