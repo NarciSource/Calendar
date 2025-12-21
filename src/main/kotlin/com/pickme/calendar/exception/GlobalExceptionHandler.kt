@@ -11,6 +11,8 @@ class GlobalExceptionHandler {
     fun handleCustomException(exception: CustomException): ResponseEntity<*> {
         return ResponseEntity
             .status(exception.errorCode.httpStatus)
-            .body<ResponseDto>(ResponseDto(false, exception.message, null))
+            .body(
+                ResponseDto(false, exception.message, null)
+            )
     }
 }

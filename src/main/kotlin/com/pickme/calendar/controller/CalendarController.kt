@@ -1,6 +1,5 @@
 package com.pickme.calendar.controller
 
-import com.pickme.calendar.dto.request.GetInterviewDto
 import com.pickme.calendar.dto.request.PostInterviewDto
 import com.pickme.calendar.dto.request.PutInterviewDto
 import com.pickme.calendar.dto.response.CalendarDto
@@ -29,7 +28,7 @@ class CalendarController(
 ) {
 
     // 해당 사용자 면접 일정 전체 조회
-    @Operation(summary = "면접 일정 전체&조건 조회", description = "면접 일정 전체 조회 & 특정 조건에 해당하는 면접 일정 조회")
+    @Operation(summary = "면접 일정 조건 조회", description = "조건에 해당하는 면접 일정 조회")
     @ApiResponse(
         responseCode = "200",
         description = "조회 요청 성공",
@@ -49,7 +48,10 @@ class CalendarController(
         val clientId = request.getAttribute("clientId") as String
 
         val calendarDto = calendarService.interviewsList(clientId, name, yearMonth)
-        return ResponseEntity.ok<CalendarDto>(calendarDto)
+
+        return ResponseEntity.ok(
+            ResponseDto(true, "면접 일정 조회 성공", calendarDto)
+        )
     }
 
     // 해당 사용자의 interviewDetailId에 해당하는 면접 일정 조회
@@ -57,7 +59,7 @@ class CalendarController(
     @ApiResponse(
         responseCode = "200",
         description = "조회 요청 성공",
-        content = [Content(schema = Schema(implementation = GetInterviewDto::class))]
+        content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
     @GetMapping("/interview")
     fun interview(
@@ -65,7 +67,10 @@ class CalendarController(
         @RequestParam interviewDetailId: String
     ): ResponseEntity<*> {
         val getInterviewDto = calendarService.getInterview(interviewDetailId)
-        return ResponseEntity.ok<GetInterviewDto>(getInterviewDto)
+
+        return ResponseEntity.ok(
+            ResponseDto(true, "면접 일정 조회 성공", getInterviewDto)
+        )
     }
 
     // 면접 일정 추가
@@ -82,27 +87,11 @@ class CalendarController(
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
 
-        val success = calendarService.registerInterviewSchedule(postInterviewDto, clientId)
-        return ResponseEntity.ok<Boolean>(success)
-    }
+        val id = calendarService.registerInterviewSchedule(postInterviewDto, clientId)
 
-    // 면접 일정 삭제
-    @Operation(summary = "면접 일정 삭제", description = "interviewDetailId에 해당하는 면접 일정 삭제")
-    @ApiResponse(
-        responseCode = "200",
-        description = "면접 일정 삭제 성공",
-        content = [Content(schema = Schema(implementation = ResponseDto::class))]
-    )
-    @DeleteMapping("/interview")
-    fun deleteInterviewSchedule(
-        @Parameter(
-            description = "면접 일정 ID (필터링 조건)",
-            example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34"
+        return ResponseEntity.ok(
+            ResponseDto(true, "면접 일정 추가 성공", mapOf("id" to id))
         )
-        @RequestParam interviewDetailId: String
-    ): ResponseEntity<*> {
-        val success = calendarService.deleteInterviewSchedule(interviewDetailId)
-        return ResponseEntity.ok<Boolean>(success)
     }
 
     // 특정 면접 일정 수정
@@ -121,7 +110,32 @@ class CalendarController(
         @RequestParam interviewDetailId: String,
         @RequestBody putInterviewDto: PutInterviewDto
     ): ResponseEntity<*> {
-        val success = calendarService.putInterviewSchedule(interviewDetailId, putInterviewDto)
-        return ResponseEntity.ok<Boolean>(success)
+        val id = calendarService.putInterviewSchedule(interviewDetailId, putInterviewDto)
+
+        return ResponseEntity.ok(
+            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to id))
+        )
+    }
+
+    // 면접 일정 삭제
+    @Operation(summary = "면접 일정 삭제", description = "interviewDetailId에 해당하는 면접 일정 삭제")
+    @ApiResponse(
+        responseCode = "200",
+        description = "면접 일정 삭제 성공",
+        content = [Content(schema = Schema(implementation = ResponseDto::class))]
+    )
+    @DeleteMapping("/interview")
+    fun deleteInterviewSchedule(
+        @Parameter(
+            description = "면접 일정 ID (필터링 조건)",
+            example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34"
+        )
+        @RequestParam interviewDetailId: String
+    ): ResponseEntity<*> {
+        calendarService.deleteInterviewSchedule(interviewDetailId)
+
+        return ResponseEntity.ok(
+            ResponseDto<Nothing>(true, "면접 일정 삭제 성공")
+        )
     }
 }

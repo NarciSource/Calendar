@@ -4,7 +4,6 @@ import com.pickme.calendar.entity.Calendar
 import com.pickme.calendar.entity.InterviewDetail
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.ZoneId
 import java.util.*
@@ -22,17 +21,17 @@ class CalendarMongoQueryProcessor(
         yearMonth: YearMonth?
     ): List<InterviewDetail> {
         return calendar.interviewDetails.stream() // 면접 일정 리스트를 스트림으로 변환
-            .filter({ interviewDetail ->
+            .filter { interviewDetail ->
                 name == null || interviewDetail.company.name == name
-            }) // 회사 이름 필터링
-            .filter({ interviewDetail ->
+            } // 회사 이름 필터링
+            .filter { interviewDetail ->
                 if (yearMonth != null) {
                     // yearMonth로부터 연도와 월 추출
                     val year = yearMonth.year // 연도 추출
                     val month = yearMonth.monthValue // 월 추출
 
                     // interviewTime의 연도와 월 비교
-                    val interviewTime: LocalDateTime = interviewDetail.interviewTime
+                    val interviewTime = interviewDetail.interviewTime
                         .toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime()
@@ -40,7 +39,7 @@ class CalendarMongoQueryProcessor(
                     return@filter interviewTime.year == year && interviewTime.monthValue == month
                 }
                 true // yearMonth가 없으면 필터링하지 않음
-            })
+            }
             .toList() // 결과를 리스트로 반환
     }
 
@@ -48,10 +47,9 @@ class CalendarMongoQueryProcessor(
     fun findInterviewDetail(calendar: Calendar, interviewDetailId: String): Optional<InterviewDetail> {
         // 스트림을 사용하여 주어진 interviewDetailId에 해당하는 면접 일정을 찾음
         return calendar.interviewDetails.stream()
-            .filter(
-                { interviewDetails ->
-                    interviewDetails.interviewDetailId == interviewDetailId
-                }) // 조건에 맞는 일정 필터링
+            .filter { interviewDetails ->
+                interviewDetails.interviewDetailId == interviewDetailId
+            } // 조건에 맞는 일정 필터링
             .findFirst() // 첫 번째 요소를 Optional로 반환
     }
 

@@ -29,9 +29,10 @@ class CalendarService(
             .findByClientId(clientId)
             .orElseThrow<CustomException>(Supplier { CustomException(ErrorCode.DOCUMENT_NOT_FOUND) })
         // 주어진 조건(현재는 name)으로 필터링된 interviewDetails 리스트를 가져옴
-        val interviewDetails = calendarMongoQueryProcessor.filterInterviewDetails(
-            calendar, name, yearMonth
-        )
+        val interviewDetails = calendarMongoQueryProcessor
+            .filterInterviewDetails(
+                calendar, name, yearMonth
+            )
 
         // Calendar 엔티티의 정보를 GetCalendarDTO로 매핑
         val calendarDto = calendarMapper.toDto(calendar)
@@ -48,12 +49,16 @@ class CalendarService(
     fun getInterview(interviewDetailId: String): GetInterviewDto {
         val calendar = calendarRepository
             .findByInterviewDetails_interviewDetailId(interviewDetailId)
-            .orElseThrow<CustomException>(Supplier { CustomException((ErrorCode.DOCUMENT_NOT_FOUND)) })
+            .orElseThrow<CustomException>(Supplier {
+                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
+            })
 
         // interviewDetailId에 해당하는 일정 가져옴
         val interviewDetail = calendarMongoQueryProcessor
             .findInterviewDetail(calendar, interviewDetailId)
-            .orElseThrow<CustomException>(Supplier { CustomException((ErrorCode.DOCUMENT_NOT_FOUND)) })
+            .orElseThrow<CustomException>(Supplier {
+                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
+            })
 
         val getInterviewDto = calendarMapper.toDto(interviewDetail)
 
@@ -61,8 +66,8 @@ class CalendarService(
     }
 
     // 사용자의 면접 일정 추가
-    fun registerInterviewSchedule(postInterviewDto: PostInterviewDto, clientId: String): Boolean {
-        val calendar: Calendar = calendarRepository.findByClientId(clientId)
+    fun registerInterviewSchedule(postInterviewDto: PostInterviewDto, clientId: String): String {
+        val calendar = calendarRepository.findByClientId(clientId)
             .orElseGet(Supplier {
                 Calendar(clientId = clientId)
             })
@@ -72,43 +77,50 @@ class CalendarService(
         // 변환된 interviewDetail을 Calendar의 interviewDetails 리스트에 추가
         calendar.interviewDetails.add(interviewDetail)
         // 업데이트된 Calendar 객체를 데이터베이스에 저장
-        calendarRepository.save<Calendar>(calendar)
+        val result = calendarRepository.save<Calendar>(calendar)
 
-        return true
-    }
-
-    // 사용자의 면접 일정 삭제
-    fun deleteInterviewSchedule(interviewDetailId: String): Boolean {
-        val calendar = calendarRepository
-            .findByInterviewDetails_interviewDetailId(interviewDetailId)
-            .orElseThrow<CustomException>(Supplier { CustomException((ErrorCode.DOCUMENT_NOT_FOUND)) })
-
-        val interviewDetail =
-            calendarMongoQueryProcessor.findInterviewDetail(calendar, interviewDetailId)
-                .orElseThrow<CustomException>(Supplier { CustomException(ErrorCode.DOCUMENT_NOT_FOUND) }
-                )
-
-        calendarMongoQueryProcessor.deleteInterview(calendar, interviewDetail)
-
-        return true
+        return result.id
     }
 
     // 사용자의 면접 일정 수정
-    fun putInterviewSchedule(interviewDetailId: String, putInterviewDto: PutInterviewDto): Boolean {
+    fun putInterviewSchedule(interviewDetailId: String, putInterviewDto: PutInterviewDto): String {
         val calendar = calendarRepository
             .findByInterviewDetails_interviewDetailId(interviewDetailId)
-            .orElseThrow<CustomException>(Supplier { CustomException((ErrorCode.DOCUMENT_NOT_FOUND)) })
+            .orElseThrow<CustomException>(Supplier {
+                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
+            })
 
         val interviewDetail = calendarMongoQueryProcessor
             .findInterviewDetail(calendar, interviewDetailId)
-            .orElseThrow<CustomException>(Supplier { CustomException((ErrorCode.DOCUMENT_NOT_FOUND)) })
+            .orElseThrow<CustomException>(Supplier {
+                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
+            })
 
         // 수정할 데이터를 받아온 DTO를 면접 일정 객체에 매핑하여 수정
         calendarMapper.toEntity(putInterviewDto, interviewDetail)
         // 수정 업데이트
         interviewDetail.touch()
         // 수정된 Calendar 객체를 데이터베이스에 저장
-        calendarRepository.save<Calendar>(calendar)
+        val saved = calendarRepository.save<Calendar>(calendar)
+
+        return saved.id
+    }
+
+    // 사용자의 면접 일정 삭제
+    fun deleteInterviewSchedule(interviewDetailId: String): Boolean {
+        val calendar = calendarRepository
+            .findByInterviewDetails_interviewDetailId(interviewDetailId)
+            .orElseThrow<CustomException>(Supplier {
+                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
+            })
+
+        val interviewDetail = calendarMongoQueryProcessor
+            .findInterviewDetail(calendar, interviewDetailId)
+            .orElseThrow<CustomException>(Supplier {
+                CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
+            })
+
+        calendarMongoQueryProcessor.deleteInterview(calendar, interviewDetail)
 
         return true
     }
