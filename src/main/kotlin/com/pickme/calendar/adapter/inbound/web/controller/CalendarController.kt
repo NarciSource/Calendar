@@ -5,7 +5,7 @@ import com.pickme.calendar.adapter.inbound.web.dto.request.PutInterviewDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.CalendarDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
 import com.pickme.calendar.adapter.inbound.web.mapper.CalendarMapper
-import com.pickme.calendar.application.usecase.InterviewService
+import com.pickme.calendar.application.usecase.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -25,8 +25,12 @@ import java.time.YearMonth
 @ApiResponse(responseCode = "401", description = "권한 없음")
 @ApiResponse(responseCode = "404", description = "면접 일정이 없음")
 class CalendarController(
-    val interviewService: InterviewService,
-    val calendarMapper: CalendarMapper
+    private val findInterviews: FindInterviewsUseCase,
+    private val getInterview: GetInterviewUseCase,
+    private val registerInterview: RegisterInterviewUseCase,
+    private val updateInterview: UpdateInterviewUseCase,
+    private val deleteInterview: DeleteInterviewUseCase,
+    private val calendarMapper: CalendarMapper
 ) {
 
     // 해당 사용자 면접 일정 전체 조회
@@ -37,7 +41,7 @@ class CalendarController(
         content = [Content(schema = Schema(implementation = CalendarDto::class))]
     )
     @GetMapping("/interviews")
-    fun interviewsList(
+    fun searchInterviews(
         request: HttpServletRequest,
         @Parameter(description = "회사 이름 (필터링 조건)", example = "앙떼띠")
         @RequestParam(required = false)
@@ -49,10 +53,12 @@ class CalendarController(
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
 
-        val result = interviewService.interviewsList(clientId, name, yearMonth)
+        val found = findInterviews.execute(
+            FindInterviewsQuery(clientId, name, yearMonth)
+        )
 
-        val calendarDto = calendarMapper.toDto(result.calendar)
-        calendarDto.interviewDetails = calendarMapper.toDto(result.interviewDetails)
+        val calendarDto = calendarMapper.toDto(found.calendar)
+        calendarDto.interviewDetails = calendarMapper.toDto(found.interviewDetails)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", calendarDto)
@@ -67,12 +73,14 @@ class CalendarController(
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
     @GetMapping("/interview")
-    fun interview(
+    fun getInterview(
         @Parameter(description = "면접 일정 ID", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
         @RequestParam interviewDetailId: String
     ): ResponseEntity<*> {
 
-        val interviewDetail = interviewService.getInterview(interviewDetailId)
+        val interviewDetail = getInterview.execute(
+            GetInterviewQuery(interviewDetailId)
+        )
 
         val getInterviewDto = calendarMapper.toDto(interviewDetail)
 
@@ -89,7 +97,7 @@ class CalendarController(
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
     @PostMapping("/interview")
-    fun createInterviewSchedule(
+    fun createInterview(
         request: HttpServletRequest,
         @RequestBody postInterviewDto: PostInterviewDto
     ): ResponseEntity<*> {
@@ -97,10 +105,12 @@ class CalendarController(
 
         val interviewDetail = calendarMapper.toEntity(postInterviewDto)
 
-        val id = interviewService.registerInterviewSchedule(interviewDetail, clientId)
+        val interviewId = registerInterview.execute(
+            RegisterInterviewCommand(clientId, interviewDetail)
+        )
 
         return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 추가 성공", mapOf("id" to id))
+            ResponseDto(true, "면접 일정 추가 성공", mapOf("id" to interviewId))
         )
     }
 
@@ -112,7 +122,7 @@ class CalendarController(
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
     @PutMapping("/interview")
-    fun putInterviewSchedule(
+    fun updateInterview(
         @Parameter(
             description = "면접 일정 ID (필터링 조건)",
             example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34"
@@ -120,12 +130,14 @@ class CalendarController(
         @RequestParam interviewDetailId: String,
         @RequestBody putInterviewDto: PutInterviewDto
     ): ResponseEntity<*> {
-        val updateInterview = calendarMapper.toEntity(putInterviewDto)
+        val interviewChanges = calendarMapper.toEntity(putInterviewDto)
 
-        val id = interviewService.putInterviewSchedule(interviewDetailId, updateInterview)
+        updateInterview.execute(
+            UpdateInterviewCommand(interviewDetailId, interviewChanges)
+        )
 
         return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to id))
+            ResponseDto<Nothing>(true, "면접 일정 수정 성공")
         )
     }
 
@@ -137,14 +149,16 @@ class CalendarController(
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
     @DeleteMapping("/interview")
-    fun deleteInterviewSchedule(
+    fun deleteInterview(
         @Parameter(
             description = "면접 일정 ID (필터링 조건)",
             example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34"
         )
         @RequestParam interviewDetailId: String
     ): ResponseEntity<*> {
-        interviewService.deleteInterviewSchedule(interviewDetailId)
+        deleteInterview.execute(
+            DeleteInterviewCommand(interviewDetailId)
+        )
 
         return ResponseEntity.ok(
             ResponseDto<Nothing>(true, "면접 일정 삭제 성공")
