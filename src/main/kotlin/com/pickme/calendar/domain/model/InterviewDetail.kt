@@ -12,18 +12,27 @@ data class InterviewDetail(
 
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
-    val company: Company,
+    var company: Company,
 
-    val interviewTime: Date,
+    var interviewTime: Date,
 
-    val position: String,
+    var position: String,
 
-    val category: String,
+    var category: String,
 
-    val description: String,
+    var description: String,
 ) {
     fun touch() {
         this.updatedAt = LocalDateTime.now()
+    }
+
+    fun update(command: InterviewUpdateSpec) {
+        command.company?.let { this.company = it }
+        command.interviewTime?.let { this.interviewTime = it }
+        command.position?.let { this.position = it }
+        command.category?.let { this.category = it }
+        command.description?.let { this.description = it }
+        touch()
     }
 
     data class Company(

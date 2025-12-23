@@ -120,10 +120,12 @@ class CalendarController(
         @RequestParam interviewDetailId: String,
         @RequestBody putInterviewDto: PutInterviewDto
     ): ResponseEntity<*> {
-        interviewService.putInterviewSchedule(interviewDetailId, putInterviewDto)
+        val updateInterview = calendarMapper.toEntity(putInterviewDto)
+
+        val id = interviewService.putInterviewSchedule(interviewDetailId, updateInterview)
 
         return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to interviewDetailId))
+            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to id))
         )
     }
 

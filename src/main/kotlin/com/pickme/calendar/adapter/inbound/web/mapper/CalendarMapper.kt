@@ -7,8 +7,8 @@ import com.pickme.calendar.adapter.inbound.web.dto.request.payload.CompanyDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.CalendarDto
 import com.pickme.calendar.domain.model.Calendar
 import com.pickme.calendar.domain.model.InterviewDetail
+import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.mapstruct.Mapper
-import org.mapstruct.MappingTarget
 import org.mapstruct.ObjectFactory
 
 @Mapper(componentModel = "spring") // Spring Bean으로 등록
@@ -21,7 +21,7 @@ interface CalendarMapper {
 
     fun toEntity(dto: CompanyDto): InterviewDetail.Company
 
-    fun toEntity(putInterviewDto: PutInterviewDto, @MappingTarget interviewDetail: InterviewDetail)
+    fun toEntity(dto: PutInterviewDto): InterviewUpdateSpec
 
     @ObjectFactory
     fun toEntity(dto: PostInterviewDto): InterviewDetail {

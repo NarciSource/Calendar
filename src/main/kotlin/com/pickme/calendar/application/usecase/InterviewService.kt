@@ -1,12 +1,11 @@
 package com.pickme.calendar.application.usecase
 
-import com.pickme.calendar.adapter.inbound.web.dto.request.PutInterviewDto
-import com.pickme.calendar.adapter.inbound.web.mapper.CalendarMapper
 import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
 import com.pickme.calendar.application.result.InterviewListResult
 import com.pickme.calendar.domain.model.Calendar
 import com.pickme.calendar.domain.model.InterviewDetail
+import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import com.pickme.calendar.domain.repository.CalendarRepository
 import org.springframework.stereotype.Service
 import java.time.YearMonth
@@ -15,7 +14,6 @@ import java.util.function.Supplier
 @Service
 class InterviewService(
     val calendarRepository: CalendarRepository,
-    val calendarMapper: CalendarMapper,
     val interviewQueryProcessor: InterviewQueryProcessor,
 ) {
 
@@ -72,27 +70,25 @@ class InterviewService(
     }
 
     // 사용자의 면접 일정 수정
-    fun putInterviewSchedule(interviewDetailId: String, putInterviewDto: PutInterviewDto): String {
+    fun putInterviewSchedule(id: String, updateInterview: InterviewUpdateSpec): String {
         val calendar = calendarRepository
-            .findByInterviewDetails_interviewDetailId(interviewDetailId)
+            .findByInterviewDetails_interviewDetailId(id)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
 
         val interviewDetail = interviewQueryProcessor
-            .findInterviewDetail(calendar, interviewDetailId)
+            .findInterviewDetail(calendar, id)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
 
-        // 수정할 데이터를 받아온 DTO를 면접 일정 객체에 매핑하여 수정
-        calendarMapper.toEntity(putInterviewDto, interviewDetail)
         // 수정 업데이트
-        interviewDetail.touch()
+        interviewDetail.update(updateInterview)
         // 수정된 Calendar 객체를 데이터베이스에 저장
-        val saved = calendarRepository.save<Calendar>(calendar)
+        calendarRepository.save<Calendar>(calendar)
 
-        return saved.id
+        return interviewDetail.interviewDetailId
     }
 
     // 사용자의 면접 일정 삭제
