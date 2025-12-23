@@ -4,6 +4,7 @@ import com.pickme.calendar.adapter.inbound.web.dto.request.PostInterviewDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutInterviewDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.CalendarDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
+import com.pickme.calendar.adapter.inbound.web.mapper.CalendarMapper
 import com.pickme.calendar.application.usecase.InterviewService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -24,7 +25,8 @@ import java.time.YearMonth
 @ApiResponse(responseCode = "401", description = "권한 없음")
 @ApiResponse(responseCode = "404", description = "면접 일정이 없음")
 class CalendarController(
-    val interviewService: InterviewService
+    val interviewService: InterviewService,
+    val calendarMapper: CalendarMapper
 ) {
 
     // 해당 사용자 면접 일정 전체 조회
@@ -47,7 +49,10 @@ class CalendarController(
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
 
-        val calendarDto = interviewService.searchInterviews(clientId, name, yearMonth)
+        val result = interviewService.interviewsList(clientId, name, yearMonth)
+
+        val calendarDto = calendarMapper.toDto(result.calendar)
+        calendarDto.interviewDetails = calendarMapper.toDto(result.interviewDetails)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", calendarDto)
@@ -66,7 +71,10 @@ class CalendarController(
         @Parameter(description = "면접 일정 ID", example = "27e725b8-5816-4783-a4d0-7a19e7ae4f34")
         @RequestParam interviewDetailId: String
     ): ResponseEntity<*> {
-        val getInterviewDto = interviewService.getInterview(interviewDetailId)
+
+        val interviewDetail = interviewService.getInterview(interviewDetailId)
+
+        val getInterviewDto = calendarMapper.toDto(interviewDetail)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", getInterviewDto)
@@ -87,7 +95,9 @@ class CalendarController(
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
 
-        val id = interviewService.registerInterviewSchedule(postInterviewDto, clientId)
+        val interviewDetail = calendarMapper.toEntity(postInterviewDto)
+
+        val id = interviewService.registerInterviewSchedule(interviewDetail, clientId)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 추가 성공", mapOf("id" to id))
@@ -110,10 +120,10 @@ class CalendarController(
         @RequestParam interviewDetailId: String,
         @RequestBody putInterviewDto: PutInterviewDto
     ): ResponseEntity<*> {
-        val id = interviewService.putInterviewSchedule(interviewDetailId, putInterviewDto)
+        interviewService.putInterviewSchedule(interviewDetailId, putInterviewDto)
 
         return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to id))
+            ResponseDto(true, "면접 일정 수정 성공", data = mapOf("id" to interviewDetailId))
         )
     }
 

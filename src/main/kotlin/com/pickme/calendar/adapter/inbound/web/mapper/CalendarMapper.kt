@@ -1,4 +1,4 @@
-package com.pickme.calendar.application.mapper
+package com.pickme.calendar.adapter.inbound.web.mapper
 
 import com.pickme.calendar.adapter.inbound.web.dto.request.GetInterviewDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostInterviewDto
