@@ -3,8 +3,7 @@ package com.pickme.calendar.application.usecase
 import com.pickme.calendar.application.annotation.UseCase
 import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
-import com.pickme.calendar.domain.model.Calendar
-import com.pickme.calendar.domain.repository.CalendarRepository
+import com.pickme.calendar.application.port.out.CalendarRepository
 import java.util.function.Supplier
 
 // 사용자의 면접 일정 삭제
@@ -14,7 +13,7 @@ class DeleteInterviewUseCase(
 ) {
     fun execute(command: DeleteInterviewCommand) {
         val calendar = repository
-            .findByInterviewDetails_interviewDetailId(command.interviewId)
+            .findByInterviewId(command.interviewId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
@@ -28,7 +27,7 @@ class DeleteInterviewUseCase(
 
         calendar.interviewDetails.remove(interviewDetail) // 면접 일정 리스트에서 해당 항목 삭제
 
-        repository.save<Calendar>(calendar)
+        repository.save(calendar)
     }
 }
 

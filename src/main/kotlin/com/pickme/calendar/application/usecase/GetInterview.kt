@@ -3,8 +3,8 @@ package com.pickme.calendar.application.usecase
 import com.pickme.calendar.application.annotation.UseCase
 import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
+import com.pickme.calendar.application.port.out.CalendarRepository
 import com.pickme.calendar.domain.model.InterviewDetail
-import com.pickme.calendar.domain.repository.CalendarRepository
 import java.util.function.Supplier
 
 // interviewDetailId에 해당하는 면접 일정 조회
@@ -14,7 +14,7 @@ class GetInterviewUseCase(
 ) {
     fun execute(query: GetInterviewQuery): InterviewDetail {
         val calendar = repository
-            .findByInterviewDetails_interviewDetailId(query.interviewId)
+            .findByInterviewId(query.interviewId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })

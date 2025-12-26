@@ -3,9 +3,9 @@ package com.pickme.calendar.application.usecase
 import com.pickme.calendar.application.annotation.UseCase
 import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
+import com.pickme.calendar.application.port.out.CalendarRepository
 import com.pickme.calendar.domain.model.Calendar
 import com.pickme.calendar.domain.model.InterviewDetail
-import com.pickme.calendar.domain.repository.CalendarRepository
 import java.time.YearMonth
 import java.util.function.Supplier
 

@@ -3,9 +3,8 @@ package com.pickme.calendar.application.usecase
 import com.pickme.calendar.application.annotation.UseCase
 import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
-import com.pickme.calendar.domain.model.Calendar
+import com.pickme.calendar.application.port.out.CalendarRepository
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
-import com.pickme.calendar.domain.repository.CalendarRepository
 import java.util.function.Supplier
 
 // 사용자의 면접 일정 수정
@@ -15,7 +14,7 @@ class UpdateInterviewUseCase(
 ) {
     fun execute(command: UpdateInterviewCommand) {
         val calendar = repository
-            .findByInterviewDetails_interviewDetailId(command.interviewId)
+            .findByInterviewId(command.interviewId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
@@ -30,7 +29,7 @@ class UpdateInterviewUseCase(
         // 수정 업데이트
         interviewDetail.update(command.interviewChanges)
         // 수정된 Calendar 객체를 데이터베이스에 저장
-        repository.save<Calendar>(calendar)
+        repository.save(calendar)
     }
 }
 
