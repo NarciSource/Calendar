@@ -2,6 +2,8 @@ package com.pickme.calendar.domain.model
 
 import org.springframework.data.mongodb.core.index.Indexed
 import java.time.LocalDateTime
+import java.time.YearMonth
+import java.time.ZoneId
 import java.util.*
 
 data class InterviewDetail(
@@ -33,6 +35,20 @@ data class InterviewDetail(
         command.category?.let { this.category = it }
         command.description?.let { this.description = it }
         touch()
+    }
+
+    fun isFromCompany(companyName: String): Boolean {
+        return this.company.name.equals(companyName, ignoreCase = true)
+    }
+
+    fun isInYearMonth(yearMonth: YearMonth): Boolean {
+        val time = interviewTime
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
+
+        return time.year == yearMonth.year &&
+                time.monthValue == yearMonth.monthValue
     }
 
     data class Company(

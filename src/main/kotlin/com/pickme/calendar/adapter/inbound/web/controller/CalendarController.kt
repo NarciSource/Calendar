@@ -58,7 +58,7 @@ class CalendarController(
         )
 
         val calendarDto = calendarMapper.toDto(found.calendar)
-        calendarDto.interviewDetails = calendarMapper.toDto(found.interviewDetails)
+        calendarDto.interviewDetails = calendarMapper.toDto(found.interviews)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", calendarDto)
