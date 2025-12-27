@@ -2,7 +2,7 @@ package com.pickme.calendar.domain.model
 
 import com.pickme.calendar.domain.model.InterviewSchedule.Company
 import org.springframework.data.mongodb.core.mapping.Document
-import java.time.YearMonth
+import java.time.LocalDate
 import java.util.*
 
 @Document(collection = "schedule")
@@ -49,5 +49,6 @@ data class InterviewSearchSpec(
     val companyLocation: String?,
     val position: String?,
     val category: String?,
-    val yearMonth: YearMonth?
+    val from: LocalDate?,
+    val to: LocalDate?
 )

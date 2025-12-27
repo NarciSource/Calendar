@@ -10,7 +10,6 @@ import com.pickme.calendar.domain.model.InterviewSearchSpec
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.mapstruct.Mapper
 import org.mapstruct.ObjectFactory
-import java.time.YearMonth
 
 @Mapper(componentModel = "spring") // Spring Bean으로 등록
 interface InterviewScheduleMapper {
@@ -35,5 +34,5 @@ interface InterviewScheduleMapper {
         )
     }
 
-    fun toEntity(dto: SearchQueryDto, yearMonth: YearMonth?): InterviewSearchSpec
+    fun toEntity(dto: SearchQueryDto): InterviewSearchSpec
 }

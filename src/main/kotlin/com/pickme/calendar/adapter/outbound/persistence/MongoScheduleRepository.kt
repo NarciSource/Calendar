@@ -20,8 +20,6 @@ class MongoScheduleRepository(
     private val mongoTemplate: MongoTemplate
 ) : ScheduleRepository {
 
-    override fun findByClientId(clientId: String) = mongoRepo.findByClientId(clientId)
-
     override fun findByScheduleId(scheduleId: String): Optional<InterviewSchedule> = mongoRepo.findById(scheduleId)
 
     override fun find(clientId: String, search: InterviewSearchSpec): List<InterviewSchedule> {
@@ -46,6 +44,15 @@ class MongoScheduleRepository(
                 search.category?.takeIf { it.isNotBlank() }
                     ?.let { Criteria.where("category").`is`(it) }
             )
+            .andIfNotNull(
+                listOf(search.from, search.to).any { it != null }.takeIf { it }
+                    ?.let {
+                        Criteria.where("date").apply {
+                            search.from?.let { gte(it) }
+                            search.to?.let { lte(it) }
+                        }
+                    }
+            )
             .with(Sort.by("date"))
 
         val schedules = mongoTemplate.find<InterviewSchedule>(query)
@@ -56,13 +63,9 @@ class MongoScheduleRepository(
     override fun save(schedule: InterviewSchedule): InterviewSchedule = mongoRepo.save(schedule)
 
     override fun deleteByScheduleId(scheduleId: String) = mongoRepo.deleteById(scheduleId)
-
-
 }
 
-interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String> {
-    fun findByClientId(clientId: String): Optional<List<InterviewSchedule>>
-}
+interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String>
 
 fun Query.andIfNotNull(criteria: Criteria?) = apply {
     criteria?.let { addCriteria(it) }

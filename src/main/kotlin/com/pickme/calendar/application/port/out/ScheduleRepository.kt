@@ -5,8 +5,6 @@ import com.pickme.calendar.domain.model.InterviewSearchSpec
 import java.util.*
 
 interface ScheduleRepository {
-    fun findByClientId(clientId: String): Optional<List<InterviewSchedule>>
-
     fun findByScheduleId(scheduleId: String): Optional<InterviewSchedule>
 
     fun find(clientId: String, search: InterviewSearchSpec): List<InterviewSchedule>

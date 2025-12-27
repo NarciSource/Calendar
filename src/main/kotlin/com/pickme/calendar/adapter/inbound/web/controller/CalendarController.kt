@@ -15,10 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import org.springdoc.core.annotations.ParameterObject
-import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.YearMonth
 
 @RestController
 @RequestMapping("/calendar")
@@ -46,12 +44,9 @@ class CalendarController(
         request: HttpServletRequest,
         @ParameterObject
         searchQueryDto: SearchQueryDto,
-        @Parameter(description = "조회할 년/월 (yyyyMM 형식)", example = "2024-11")
-        @DateTimeFormat(pattern = "yyyy-MM")
-        yearMonth: YearMonth?
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
-        val search = scheduleMapper.toEntity(searchQueryDto, yearMonth)
+        val search = scheduleMapper.toEntity(searchQueryDto)
 
         val found = findSchedules.execute(
             FindSchedulesQuery(clientId, search)
