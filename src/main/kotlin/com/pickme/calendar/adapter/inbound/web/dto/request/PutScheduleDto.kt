@@ -6,12 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
 @Schema(description = "면접 일정 수정")
-data class PutInterviewDto(
+data class PutScheduleDto(
     val company: CompanyDto,
 
     @field:Schema(description = "면접 일정 시간", example = "2024-12-01T02:49:03.465+00:00")
     @field:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    val interviewTime: Date,
+    val date: Date,
 
     @field:Schema(description = "직무", example = "바리스타")
     val position: String,

@@ -9,31 +9,31 @@ import java.util.function.Supplier
 
 // 사용자의 면접 일정 수정
 @UseCase
-class UpdateInterviewUseCase(
+class UpdateScheduleUseCase(
     private val repository: CalendarRepository,
 ) {
-    fun execute(command: UpdateInterviewCommand) {
+    fun execute(command: UpdateScheduleCommand) {
         val calendar = repository
-            .findByInterviewId(command.interviewId)
+            .findByScheduleId(command.scheduleId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
 
-        val interviewDetail = calendar.interviewDetails.stream()
-            .filter { interviewDetails -> interviewDetails.interviewDetailId == command.interviewId }
+        val schedule = calendar.schedules.stream()
+            .filter { it.id == command.scheduleId }
             .findFirst()
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
 
         // 수정 업데이트
-        interviewDetail.update(command.interviewChanges)
+        schedule.update(command.changes)
         // 수정된 Calendar 객체를 데이터베이스에 저장
         repository.save(calendar)
     }
 }
 
-data class UpdateInterviewCommand(
-    val interviewId: String,
-    val interviewChanges: InterviewUpdateSpec
+data class UpdateScheduleCommand(
+    val scheduleId: String,
+    val changes: InterviewUpdateSpec
 )

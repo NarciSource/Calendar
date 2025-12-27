@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document(collection = "calendar")
 data class Calendar(
     @Id
-    val id: String = ObjectId().toString(),
+    val id: String = ObjectId.get().toHexString(),
 
     val clientId: String,
 
-    var interviewDetails: MutableList<InterviewDetail> = mutableListOf(),
+    var schedules: MutableList<InterviewSchedule> = mutableListOf(),
 )

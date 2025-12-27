@@ -14,8 +14,8 @@ class MongoCalendarRepository(
 ) : CalendarRepository {
     override fun findByClientId(clientId: String) = mongoRepo.findByClientId(clientId)
 
-    override fun findByInterviewId(interviewDetailId: String) =
-        mongoRepo.findByInterviewDetails_interviewDetailId(interviewDetailId)
+    override fun findByScheduleId(scheduleId: String) =
+        mongoRepo.findBySchedules_id(scheduleId)
 
     override fun save(calendar: Calendar): Calendar = mongoRepo.save(calendar)
 }
@@ -23,5 +23,5 @@ class MongoCalendarRepository(
 interface SpringDataCalendarRepository : MongoRepository<Calendar, String> {
     fun findByClientId(clientId: String): Optional<Calendar>
 
-    fun findByInterviewDetails_interviewDetailId(interviewDetailId: String): Optional<Calendar>
+    fun findBySchedules_id(scheduleId: String): Optional<Calendar>
 }

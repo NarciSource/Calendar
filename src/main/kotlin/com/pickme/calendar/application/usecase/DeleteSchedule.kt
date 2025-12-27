@@ -8,29 +8,29 @@ import java.util.function.Supplier
 
 // 사용자의 면접 일정 삭제
 @UseCase
-class DeleteInterviewUseCase(
+class DeleteScheduleUseCase(
     private val repository: CalendarRepository
 ) {
-    fun execute(command: DeleteInterviewCommand) {
+    fun execute(command: DeleteScheduleCommand) {
         val calendar = repository
-            .findByInterviewId(command.interviewId)
+            .findByScheduleId(command.scheduleId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
 
-        val interviewDetail = calendar.interviewDetails.stream()
-            .filter { interviewDetails -> interviewDetails.interviewDetailId == command.interviewId }
+        val schedule = calendar.schedules.stream()
+            .filter { it.id == command.scheduleId }
             .findFirst()
             .orElseThrow<CustomException>(Supplier {
                 CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
             })
 
-        calendar.interviewDetails.remove(interviewDetail) // 면접 일정 리스트에서 해당 항목 삭제
+        calendar.schedules.remove(schedule) // 면접 일정 리스트에서 해당 항목 삭제
 
         repository.save(calendar)
     }
 }
 
-data class DeleteInterviewCommand(
-    val interviewId: String
+data class DeleteScheduleCommand(
+    val scheduleId: String
 )
