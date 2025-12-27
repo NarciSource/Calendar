@@ -1,6 +1,7 @@
 package com.pickme.calendar.domain.model
 
 import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -8,12 +9,15 @@ import java.time.ZoneId
 import java.util.*
 
 abstract class Schedule(
-    @Indexed
-    val id: String = ObjectId.get().toHexString(),
+    @Id
+    var id: String = ObjectId.get().toHexString(),
 
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
     var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    @Indexed
+    val clientId: String,
 
     var date: Date
 ) {

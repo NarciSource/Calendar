@@ -1,10 +1,10 @@
 package com.pickme.calendar.adapter.inbound.web.controller
 
+import com.pickme.calendar.adapter.inbound.web.dto.request.GetScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
-import com.pickme.calendar.adapter.inbound.web.dto.response.CalendarDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
-import com.pickme.calendar.adapter.inbound.web.mapper.CalendarMapper
+import com.pickme.calendar.adapter.inbound.web.mapper.InterviewScheduleMapper
 import com.pickme.calendar.application.usecase.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -30,14 +30,14 @@ class CalendarController(
     private val registerSchedule: RegisterScheduleUseCase,
     private val updateSchedule: UpdateScheduleUseCase,
     private val deleteSchedule: DeleteScheduleUseCase,
-    private val calendarMapper: CalendarMapper
+    private val scheduleMapper: InterviewScheduleMapper
 ) {
 
     @Operation(summary = "면접 일정 조건 조회", description = "조건에 해당하는 면접 일정 조회")
     @ApiResponse(
         responseCode = "200",
         description = "조회 요청 성공",
-        content = [Content(schema = Schema(implementation = CalendarDto::class))]
+        content = [Content(schema = Schema(implementation = GetScheduleDto::class))]
     )
     @GetMapping("/interviews")
     fun searchInterviews(
@@ -56,11 +56,10 @@ class CalendarController(
             FindSchedulesQuery(clientId, name, yearMonth)
         )
 
-        val calendarDto = calendarMapper.toDto(found.calendar)
-        calendarDto.schedules = calendarMapper.toDto(found.schedules)
+        val scheduleDto = scheduleMapper.toDto(found)
 
         return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 조회 성공", calendarDto)
+            ResponseDto(true, "면접 일정 조회 성공", scheduleDto)
         )
     }
 
@@ -80,7 +79,7 @@ class CalendarController(
             GetScheduleQuery(scheduleId)
         )
 
-        val scheduleDto = calendarMapper.toDto(schedule)
+        val scheduleDto = scheduleMapper.toDto(schedule)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", scheduleDto)
@@ -100,7 +99,7 @@ class CalendarController(
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
 
-        val schedule = calendarMapper.toEntity(postScheduleDto)
+        val schedule = scheduleMapper.toEntity(postScheduleDto, clientId)
 
         val scheduleId = registerSchedule.execute(
             RegisterScheduleCommand(clientId, schedule)
@@ -123,7 +122,7 @@ class CalendarController(
         @RequestParam scheduleId: String,
         @RequestBody putScheduleDto: PutScheduleDto
     ): ResponseEntity<*> {
-        val changes = calendarMapper.toEntity(putScheduleDto)
+        val changes = scheduleMapper.toEntity(putScheduleDto)
 
         updateSchedule.execute(
             UpdateScheduleCommand(scheduleId, changes)

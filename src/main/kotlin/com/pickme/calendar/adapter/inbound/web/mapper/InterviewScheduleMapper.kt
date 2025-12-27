@@ -4,16 +4,13 @@ import com.pickme.calendar.adapter.inbound.web.dto.request.GetScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.payload.CompanyDto
-import com.pickme.calendar.adapter.inbound.web.dto.response.CalendarDto
-import com.pickme.calendar.domain.model.Calendar
 import com.pickme.calendar.domain.model.InterviewSchedule
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.mapstruct.Mapper
 import org.mapstruct.ObjectFactory
 
 @Mapper(componentModel = "spring") // Spring Bean으로 등록
-interface CalendarMapper {
-    fun toDto(calendar: Calendar): CalendarDto
+interface InterviewScheduleMapper {
 
     fun toDto(interviewSchedules: List<InterviewSchedule>): List<GetScheduleDto>
 
@@ -24,8 +21,9 @@ interface CalendarMapper {
     fun toEntity(dto: PutScheduleDto): InterviewUpdateSpec
 
     @ObjectFactory
-    fun toEntity(dto: PostScheduleDto): InterviewSchedule {
+    fun toEntity(dto: PostScheduleDto, clientId: String): InterviewSchedule {
         return InterviewSchedule(
+            clientId = clientId,
             company = toEntity(dto.company),
             date = dto.date,
             position = dto.position,

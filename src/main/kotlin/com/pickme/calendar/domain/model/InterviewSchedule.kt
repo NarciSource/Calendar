@@ -1,9 +1,13 @@
 package com.pickme.calendar.domain.model
 
 import com.pickme.calendar.domain.model.InterviewSchedule.Company
+import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
+@Document(collection = "schedule")
 class InterviewSchedule(
+    clientId: String,
+
     date: Date,
 
     var company: Company,
@@ -13,7 +17,7 @@ class InterviewSchedule(
     var category: String,
 
     var description: String,
-) : Schedule(date = date) {
+) : Schedule(clientId = clientId, date = date) {
 
     class Company(
         val name: String,
