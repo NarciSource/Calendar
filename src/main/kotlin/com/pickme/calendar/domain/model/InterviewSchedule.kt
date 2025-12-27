@@ -25,15 +25,6 @@ class InterviewSchedule(
 
         val location: String,
     )
-
-    fun update(command: InterviewUpdateSpec) {
-        command.company?.let { this.company = it }
-        command.date?.let { this.date = it }
-        command.position?.let { this.position = it }
-        command.category?.let { this.category = it }
-        command.description?.let { this.description = it }
-        touch()
-    }
 }
 
 data class InterviewUpdateSpec(

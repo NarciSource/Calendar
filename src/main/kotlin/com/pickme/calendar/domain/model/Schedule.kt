@@ -16,8 +16,4 @@ abstract class Schedule(
     val clientId: String,
 
     var date: Date
-) {
-    fun touch() {
-        this.updatedAt = LocalDateTime.now()
-    }
-}
+)

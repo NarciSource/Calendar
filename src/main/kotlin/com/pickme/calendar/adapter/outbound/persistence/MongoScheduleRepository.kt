@@ -1,17 +1,23 @@
 package com.pickme.calendar.adapter.outbound.persistence
 
+import com.pickme.calendar.application.exception.CustomException
+import com.pickme.calendar.application.exception.ErrorCode
 import com.pickme.calendar.application.port.out.ScheduleRepository
 import com.pickme.calendar.domain.model.InterviewSchedule
 import com.pickme.calendar.domain.model.InterviewSearchSpec
+import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.springframework.context.annotation.Primary
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.find
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
+import org.springframework.data.mongodb.core.updateFirst
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 import java.util.*
+import kotlin.time.Clock
 
 @Repository
 @Primary
@@ -58,6 +64,31 @@ class MongoScheduleRepository(
         val schedules = mongoTemplate.find<InterviewSchedule>(query)
 
         return schedules
+    }
+
+    override fun update(scheduleId: String, changes: InterviewUpdateSpec) {
+
+        val query = Query().apply {
+            addCriteria(Criteria.where("_id").`is`(scheduleId))
+        }
+
+        val update = Update().apply {
+            changes.company?.let { set("company", it) }
+            changes.date?.let { set("date", it) }
+            changes.position?.let { set("position", it) }
+            changes.category?.let { set("category", it) }
+            changes.description?.let { set("description", it) }
+            set("updatedAt", Clock.System.now())
+        }
+
+        val result = mongoTemplate.updateFirst<InterviewSchedule>(
+            query,
+            update
+        )
+
+        if (result.matchedCount == 0L) {
+            throw CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
+        }
     }
 
     override fun save(schedule: InterviewSchedule): InterviewSchedule = mongoRepo.save(schedule)
