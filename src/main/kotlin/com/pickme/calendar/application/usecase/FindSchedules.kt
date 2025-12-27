@@ -5,7 +5,7 @@ import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
 import com.pickme.calendar.application.port.out.ScheduleRepository
 import com.pickme.calendar.domain.model.InterviewSchedule
-import java.time.YearMonth
+import com.pickme.calendar.domain.model.InterviewSearchSpec
 import java.util.function.Supplier
 
 @UseCase
@@ -18,12 +18,7 @@ class FindSchedulesUseCase(
             .orElseThrow<CustomException>(Supplier {
                 CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
             })
-            .filter { interview ->
-                query.name?.let { interview.isFromCompany(it) } ?: true
-            }
-            .filter { interview ->
-                query.yearMonth?.let { interview.isInYearMonth(it) } ?: true
-            }
+            .filter { it.matches(query.search) }
             .toList()
 
         return schedules
@@ -32,6 +27,5 @@ class FindSchedulesUseCase(
 
 data class FindSchedulesQuery(
     val clientId: String,
-    val name: String?,
-    val yearMonth: YearMonth?
+    val search: InterviewSearchSpec
 )

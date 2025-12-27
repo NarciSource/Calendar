@@ -2,6 +2,7 @@ package com.pickme.calendar.domain.model
 
 import com.pickme.calendar.domain.model.InterviewSchedule.Company
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.YearMonth
 import java.util.*
 
 @Document(collection = "schedule")
@@ -34,8 +35,15 @@ class InterviewSchedule(
         touch()
     }
 
-    fun isFromCompany(companyName: String): Boolean {
-        return this.company.name.equals(companyName, ignoreCase = true)
+    fun matches(search: InterviewSearchSpec): Boolean {
+        val conditions = listOf(
+            search.companyName?.let { company.name == it } ?: true,
+            search.companyLocation?.let { company.location == it } ?: true,
+            search.position?.let { position == it } ?: true,
+            search.category?.let { category == it } ?: true,
+            search.yearMonth?.let { isInYearMonth(it) } ?: true
+        )
+        return conditions.all { it }
     }
 }
 
@@ -45,4 +53,12 @@ data class InterviewUpdateSpec(
     val position: String?,
     val category: String?,
     val description: String?,
+)
+
+data class InterviewSearchSpec(
+    val companyName: String?,
+    val companyLocation: String?,
+    val position: String?,
+    val category: String?,
+    val yearMonth: YearMonth?
 )

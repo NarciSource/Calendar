@@ -3,6 +3,7 @@ package com.pickme.calendar.adapter.inbound.web.controller
 import com.pickme.calendar.adapter.inbound.web.dto.request.GetScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
+import com.pickme.calendar.adapter.inbound.web.dto.request.SearchQueryDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
 import com.pickme.calendar.adapter.inbound.web.mapper.InterviewScheduleMapper
 import com.pickme.calendar.application.usecase.*
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -42,18 +44,17 @@ class CalendarController(
     @GetMapping("/interviews")
     fun searchInterviews(
         request: HttpServletRequest,
-        @Parameter(description = "회사 이름 (필터링 조건)", example = "앙떼띠")
-        @RequestParam(required = false)
-        name: String?,
-        @Parameter(description = "조회할 년/월 (yyyyMM 형식, 필터링 조건)", example = "2024-11")
-        @RequestParam(required = false)
+        @ParameterObject
+        searchQueryDto: SearchQueryDto,
+        @Parameter(description = "조회할 년/월 (yyyyMM 형식)", example = "2024-11")
         @DateTimeFormat(pattern = "yyyy-MM")
         yearMonth: YearMonth?
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
+        val search = scheduleMapper.toEntity(searchQueryDto, yearMonth)
 
         val found = findSchedules.execute(
-            FindSchedulesQuery(clientId, name, yearMonth)
+            FindSchedulesQuery(clientId, search)
         )
 
         val scheduleDto = scheduleMapper.toDto(found)

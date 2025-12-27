@@ -3,11 +3,14 @@ package com.pickme.calendar.adapter.inbound.web.mapper
 import com.pickme.calendar.adapter.inbound.web.dto.request.GetScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
+import com.pickme.calendar.adapter.inbound.web.dto.request.SearchQueryDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.payload.CompanyDto
 import com.pickme.calendar.domain.model.InterviewSchedule
+import com.pickme.calendar.domain.model.InterviewSearchSpec
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.mapstruct.Mapper
 import org.mapstruct.ObjectFactory
+import java.time.YearMonth
 
 @Mapper(componentModel = "spring") // Spring Bean으로 등록
 interface InterviewScheduleMapper {
@@ -31,4 +34,6 @@ interface InterviewScheduleMapper {
             description = dto.description
         )
     }
+
+    fun toEntity(dto: SearchQueryDto, yearMonth: YearMonth?): InterviewSearchSpec
 }
