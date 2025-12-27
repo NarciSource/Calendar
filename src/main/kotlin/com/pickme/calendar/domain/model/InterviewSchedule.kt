@@ -34,17 +34,6 @@ class InterviewSchedule(
         command.description?.let { this.description = it }
         touch()
     }
-
-    fun matches(search: InterviewSearchSpec): Boolean {
-        val conditions = listOf(
-            search.companyName?.let { company.name == it } ?: true,
-            search.companyLocation?.let { company.location == it } ?: true,
-            search.position?.let { position == it } ?: true,
-            search.category?.let { category == it } ?: true,
-            search.yearMonth?.let { isInYearMonth(it) } ?: true
-        )
-        return conditions.all { it }
-    }
 }
 
 data class InterviewUpdateSpec(
