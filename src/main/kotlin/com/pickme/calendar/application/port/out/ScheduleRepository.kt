@@ -3,10 +3,9 @@ package com.pickme.calendar.application.port.out
 import com.pickme.calendar.domain.model.InterviewSchedule
 import com.pickme.calendar.domain.model.InterviewSearchSpec
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
-import java.util.*
 
 interface ScheduleRepository {
-    fun findByScheduleId(scheduleId: String, clientId: String): Optional<InterviewSchedule>
+    fun findByScheduleId(scheduleId: String, clientId: String): InterviewSchedule?
 
     fun find(search: InterviewSearchSpec, clientId: String): List<InterviewSchedule>
 

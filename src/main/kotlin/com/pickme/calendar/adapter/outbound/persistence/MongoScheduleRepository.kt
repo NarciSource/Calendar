@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Update
 import org.springframework.data.mongodb.core.updateFirst
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
-import java.util.*
 import kotlin.time.Clock
 
 @Repository
@@ -26,7 +25,7 @@ class MongoScheduleRepository(
     private val mongoTemplate: MongoTemplate
 ) : ScheduleRepository {
 
-    override fun findByScheduleId(scheduleId: String, clientId: String): Optional<InterviewSchedule> =
+    override fun findByScheduleId(scheduleId: String, clientId: String): InterviewSchedule? =
         mongoRepo.findByIdAndClientId(scheduleId, clientId)
 
     override fun find(search: InterviewSearchSpec, clientId: String): List<InterviewSchedule> {
@@ -100,7 +99,7 @@ class MongoScheduleRepository(
 }
 
 interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String> {
-    fun findByIdAndClientId(id: String, clientId: String): Optional<InterviewSchedule>
+    fun findByIdAndClientId(id: String, clientId: String): InterviewSchedule?
 
     fun deleteByIdAndClientId(id: String, clientId: String)
 }

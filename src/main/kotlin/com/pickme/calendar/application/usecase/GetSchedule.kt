@@ -5,7 +5,6 @@ import com.pickme.calendar.application.exception.CustomException
 import com.pickme.calendar.application.exception.ErrorCode
 import com.pickme.calendar.application.port.out.ScheduleRepository
 import com.pickme.calendar.domain.model.InterviewSchedule
-import java.util.function.Supplier
 
 @UseCase
 class GetScheduleUseCase(
@@ -14,10 +13,7 @@ class GetScheduleUseCase(
     fun execute(query: GetScheduleQuery): InterviewSchedule {
 
         val schedule = repository.findByScheduleId(query.scheduleId, query.clientId)
-            .orElseThrow<CustomException>(Supplier {
-                CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
-            })
-
+            ?: throw CustomException(ErrorCode.DOCUMENT_NOT_FOUND)
         return schedule
     }
 }
