@@ -11,13 +11,22 @@ plugins {
     kotlin("jvm") version kotlinVersion              // Kotlin JVM
     kotlin("kapt") version kotlinVersion            // Kotlin Annotation Processor
     kotlin("plugin.spring") version kotlinVersion   // Spring 지원
+
+    application
 }
 
 // --------------------------------------
 // Project metadata
 // --------------------------------------
 group = "com.pickme"
-version = "0.1.0-SNAPSHOT"
+version = "2.1.0-SNAPSHOT"
+
+// --------------------------------------
+// Project Main Class
+// --------------------------------------
+application {
+    mainClass.set("com.pickme.calendar.CalendarApplicationKt")
+}
 
 // --------------------------------------
 // Java & Kotlin toolchain

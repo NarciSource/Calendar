@@ -1,5 +1,6 @@
 package com.pickme.calendar.adapter.inbound.web.controller
 
+import com.pickme.calendar.adapter.inbound.web.api.ApiPaths
 import com.pickme.calendar.adapter.inbound.web.dto.request.GetScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/calendar")
+@RequestMapping(ApiPaths.V2)
 @Tag(name = "Calendar", description = "면접 캘린더 API")
 @ApiResponse(responseCode = "400", description = "잘못된 요청")
 @ApiResponse(responseCode = "401", description = "권한 없음")
@@ -39,8 +40,8 @@ class CalendarController(
         description = "조회 요청 성공",
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
-    @GetMapping("/interview")
-    fun getInterview(
+    @GetMapping("/schedule")
+    fun getSchedule(
         request: HttpServletRequest,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String
@@ -64,8 +65,8 @@ class CalendarController(
         description = "조회 요청 성공",
         content = [Content(schema = Schema(implementation = GetScheduleDto::class))]
     )
-    @GetMapping("/interviews")
-    fun searchInterviews(
+    @GetMapping("/schedules")
+    fun searchSchedules(
         request: HttpServletRequest,
         @ParameterObject searchQueryDto: SearchQueryDto,
     ): ResponseEntity<*> {
@@ -89,8 +90,8 @@ class CalendarController(
         description = "면접 일정 추가 성공",
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
-    @PostMapping("/interview")
-    fun createInterview(
+    @PostMapping("/schedule")
+    fun createSchedule(
         request: HttpServletRequest,
         @RequestBody postScheduleDto: PostScheduleDto
     ): ResponseEntity<*> {
@@ -113,8 +114,8 @@ class CalendarController(
         description = "면접 일정 수정 성공",
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
-    @PutMapping("/interview")
-    fun updateInterview(
+    @PutMapping("/schedule")
+    fun updateSchedule(
         request: HttpServletRequest,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String,
@@ -139,8 +140,8 @@ class CalendarController(
         description = "면접 일정 삭제 성공",
         content = [Content(schema = Schema(implementation = ResponseDto::class))]
     )
-    @DeleteMapping("/interview")
-    fun deleteInterview(
+    @DeleteMapping("/schedule")
+    fun deleteSchedule(
         request: HttpServletRequest,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String

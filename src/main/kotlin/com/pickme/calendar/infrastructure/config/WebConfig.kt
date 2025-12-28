@@ -30,10 +30,10 @@ class WebConfig(
 		 */
 
         registry.addInterceptor(jwtInterceptor)
-            .addPathPatterns("/calendar/**") // /calendar/** 경로에 인터셉터 적용
+            .addPathPatterns("/api/**") // /calendar/** 경로에 인터셉터 적용
             .excludePathPatterns(
-                "/calendar/swagger-ui/**",
-                "/calendar/v3/api-docs/**"
+                "/swagger-ui/**",
+                "/v3/api-docs/**"
             ) // 인터셉터 적용 제외
         /*
 		 * registry.addInterceptor(jwtInterceptor):
