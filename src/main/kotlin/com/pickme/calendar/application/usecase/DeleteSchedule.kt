@@ -9,10 +9,11 @@ class DeleteScheduleUseCase(
 ) {
     fun execute(command: DeleteScheduleCommand) {
 
-        repository.deleteByScheduleId(command.scheduleId)
+        repository.deleteByScheduleId(command.scheduleId, command.clientId)
     }
 }
 
 data class DeleteScheduleCommand(
-    val scheduleId: String
+    val scheduleId: String,
+    val clientId: String
 )

@@ -14,48 +14,25 @@ class JwtInterceptor(val jwtService: JwtService) : HandlerInterceptor {
         response: HttpServletResponse,
         handler: Any
     ): Boolean {
-        /*
-		 * HttpServletRequest request:
-		 * - 클라이언트 요청 정보를 담고 있는 객체.
-		 * - 헤더(Header), 요청 파라미터(Parameter), URI 등의 데이터를 읽을 수 있음.
-		 */
 
-        /*
-		 * HttpServletResponse response:
-		 * - 서버가 클라이언트에게 응답을 보낼 때 사용하는 객체.
-		 * - 응답 상태 코드, 헤더(Header), 본문(Body) 등을 설정할 수 있음.
-		 */
-
-        /*
-		 * Object handler:
-		 * - 현재 요청을 처리할 핸들러(컨트롤러 메서드)에 대한 정보.
-		 * - 주로 디버깅이나 특정 조건에서 핸들러를 식별할 때 사용.
-		 * 모든 요청에 대해 인터셉터를 적용할 경우, handler는 사용하지 않아도 됩니다.
-		 */
-
+        // OPTIONS 통과
         if ("OPTIONS".equals(request.method, ignoreCase = true)) {
             return true
         }
 
-        // Post 요청(면접 일정 생성 추가) 시 에만 토큰 인터셉트 후 검사
-        if ("POST".equals(request.method, ignoreCase = true)
-            || ("GET".equals(request.method, ignoreCase = true)
-                    && request.requestURI == "/calendar/interviews")
-        ) {
-            // 클라이언트 요청 헤더에서 Authorization 정보를 가져옴
-            val token = request.getHeader("Authorization")
-            // Authorization 헤더가 없거나 Bearer 형식이 아니면 401(Unauthorized) 상태 코드를 반환하고 요청을 중단
-            if (token == null || !token.startsWith("Bearer ")) {
-                response.status = HttpServletResponse.SC_UNAUTHORIZED // 응답 상태를 401로 설정
-                return false // 요청 처리 중단
-            }
-
-            // 토큰에서 사용자 정보를 추출
-            val clientId = jwtService.extractToken(token)
-
-            // HttpServletRequest에 사용자 정보를 속성으로 추가하여 컨트롤러에서 사용할 수 있게 함
-            request.setAttribute("clientId", clientId)
+        // 클라이언트 요청 헤더에서 Authorization 정보를 가져옴
+        val token = request.getHeader("Authorization")
+        // Authorization 헤더가 없거나 Bearer 형식이 아니면 401(Unauthorized) 상태 코드를 반환하고 요청을 중단
+        if (token == null || !token.startsWith("Bearer ")) {
+            response.status = HttpServletResponse.SC_UNAUTHORIZED // 응답 상태를 401로 설정
+            return false // 요청 처리 중단
         }
+
+        // 토큰에서 사용자 정보를 추출
+        val clientId = jwtService.extractToken(token)
+
+        // HttpServletRequest에 사용자 정보를 속성으로 추가하여 컨트롤러에서 사용할 수 있게 함
+        request.setAttribute("clientId", clientId)
 
         // 요청 처리를 계속 진행
         return true

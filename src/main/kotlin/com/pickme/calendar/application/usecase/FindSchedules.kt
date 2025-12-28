@@ -11,12 +11,12 @@ class FindSchedulesUseCase(
 ) {
     fun execute(query: FindSchedulesQuery): List<InterviewSchedule> {
 
-        val schedules = repository.find(query.clientId, query.search)
+        val schedules = repository.find(query.search, query.clientId)
         return schedules
     }
 }
 
 data class FindSchedulesQuery(
+    val search: InterviewSearchSpec,
     val clientId: String,
-    val search: InterviewSearchSpec
 )

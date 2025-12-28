@@ -33,6 +33,31 @@ class CalendarController(
     private val scheduleMapper: InterviewScheduleMapper
 ) {
 
+    @Operation(summary = "면접 일정 조회", description = "scheduleId에 해당하는 면접 일정 조회")
+    @ApiResponse(
+        responseCode = "200",
+        description = "조회 요청 성공",
+        content = [Content(schema = Schema(implementation = ResponseDto::class))]
+    )
+    @GetMapping("/interview")
+    fun getInterview(
+        request: HttpServletRequest,
+        @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
+        @RequestParam scheduleId: String
+    ): ResponseEntity<*> {
+        val clientId = request.getAttribute("clientId") as String
+
+        val schedule = getSchedule.execute(
+            GetScheduleQuery(scheduleId, clientId)
+        )
+
+        val scheduleDto = scheduleMapper.toDto(schedule)
+
+        return ResponseEntity.ok(
+            ResponseDto(true, "면접 일정 조회 성공", scheduleDto)
+        )
+    }
+
     @Operation(summary = "면접 일정 조건 조회", description = "조건에 해당하는 면접 일정 조회")
     @ApiResponse(
         responseCode = "200",
@@ -42,40 +67,16 @@ class CalendarController(
     @GetMapping("/interviews")
     fun searchInterviews(
         request: HttpServletRequest,
-        @ParameterObject
-        searchQueryDto: SearchQueryDto,
+        @ParameterObject searchQueryDto: SearchQueryDto,
     ): ResponseEntity<*> {
         val clientId = request.getAttribute("clientId") as String
         val search = scheduleMapper.toEntity(searchQueryDto)
 
         val found = findSchedules.execute(
-            FindSchedulesQuery(clientId, search)
+            FindSchedulesQuery(search, clientId)
         )
 
         val scheduleDto = scheduleMapper.toDto(found)
-
-        return ResponseEntity.ok(
-            ResponseDto(true, "면접 일정 조회 성공", scheduleDto)
-        )
-    }
-
-    @Operation(summary = "면접 일정 조회", description = "scheduleId에 해당하는 면접 일정 조회")
-    @ApiResponse(
-        responseCode = "200",
-        description = "조회 요청 성공",
-        content = [Content(schema = Schema(implementation = ResponseDto::class))]
-    )
-    @GetMapping("/interview")
-    fun getInterview(
-        @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @RequestParam scheduleId: String
-    ): ResponseEntity<*> {
-
-        val schedule = getSchedule.execute(
-            GetScheduleQuery(scheduleId)
-        )
-
-        val scheduleDto = scheduleMapper.toDto(schedule)
 
         return ResponseEntity.ok(
             ResponseDto(true, "면접 일정 조회 성공", scheduleDto)
@@ -114,14 +115,16 @@ class CalendarController(
     )
     @PutMapping("/interview")
     fun updateInterview(
+        request: HttpServletRequest,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String,
         @RequestBody putScheduleDto: PutScheduleDto
     ): ResponseEntity<*> {
+        val clientId = request.getAttribute("clientId") as String
         val changes = scheduleMapper.toEntity(putScheduleDto)
 
         updateSchedule.execute(
-            UpdateScheduleCommand(scheduleId, changes)
+            UpdateScheduleCommand(changes, scheduleId, clientId)
         )
 
         return ResponseEntity.ok(
@@ -138,11 +141,14 @@ class CalendarController(
     )
     @DeleteMapping("/interview")
     fun deleteInterview(
+        request: HttpServletRequest,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String
     ): ResponseEntity<*> {
+        val clientId = request.getAttribute("clientId") as String
+
         deleteSchedule.execute(
-            DeleteScheduleCommand(scheduleId)
+            DeleteScheduleCommand(scheduleId, clientId)
         )
 
         return ResponseEntity.ok(

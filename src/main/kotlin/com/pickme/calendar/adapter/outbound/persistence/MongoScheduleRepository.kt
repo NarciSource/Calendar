@@ -26,9 +26,10 @@ class MongoScheduleRepository(
     private val mongoTemplate: MongoTemplate
 ) : ScheduleRepository {
 
-    override fun findByScheduleId(scheduleId: String): Optional<InterviewSchedule> = mongoRepo.findById(scheduleId)
+    override fun findByScheduleId(scheduleId: String, clientId: String): Optional<InterviewSchedule> =
+        mongoRepo.findByIdAndClientId(scheduleId, clientId)
 
-    override fun find(clientId: String, search: InterviewSearchSpec): List<InterviewSchedule> {
+    override fun find(search: InterviewSearchSpec, clientId: String): List<InterviewSchedule> {
         val query = Query()
             .andIfNotNull(
                 clientId.takeIf { it.isNotBlank() }
@@ -66,10 +67,11 @@ class MongoScheduleRepository(
         return schedules
     }
 
-    override fun update(scheduleId: String, changes: InterviewUpdateSpec) {
+    override fun update(changes: InterviewUpdateSpec, scheduleId: String, clientId: String) {
 
         val query = Query().apply {
             addCriteria(Criteria.where("_id").`is`(scheduleId))
+            addCriteria(Criteria.where("clientId").`is`(clientId))
         }
 
         val update = Update().apply {
@@ -93,10 +95,15 @@ class MongoScheduleRepository(
 
     override fun save(schedule: InterviewSchedule): InterviewSchedule = mongoRepo.save(schedule)
 
-    override fun deleteByScheduleId(scheduleId: String) = mongoRepo.deleteById(scheduleId)
+    override fun deleteByScheduleId(scheduleId: String, clientId: String) =
+        mongoRepo.deleteByIdAndClientId(scheduleId, clientId)
 }
 
-interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String>
+interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String> {
+    fun findByIdAndClientId(id: String, clientId: String): Optional<InterviewSchedule>
+
+    fun deleteByIdAndClientId(id: String, clientId: String)
+}
 
 fun Query.andIfNotNull(criteria: Criteria?) = apply {
     criteria?.let { addCriteria(it) }

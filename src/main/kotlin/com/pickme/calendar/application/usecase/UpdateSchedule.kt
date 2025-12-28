@@ -10,11 +10,12 @@ class UpdateScheduleUseCase(
 ) {
     fun execute(command: UpdateScheduleCommand) {
 
-        repository.update(command.scheduleId, command.changes)
+        repository.update(command.changes, command.scheduleId, command.clientId)
     }
 }
 
 data class UpdateScheduleCommand(
+    val changes: InterviewUpdateSpec,
     val scheduleId: String,
-    val changes: InterviewUpdateSpec
+    val clientId: String
 )

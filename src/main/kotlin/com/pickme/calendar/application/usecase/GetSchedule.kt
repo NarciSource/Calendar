@@ -13,7 +13,7 @@ class GetScheduleUseCase(
 ) {
     fun execute(query: GetScheduleQuery): InterviewSchedule {
 
-        val schedule = repository.findByScheduleId(query.scheduleId)
+        val schedule = repository.findByScheduleId(query.scheduleId, query.clientId)
             .orElseThrow<CustomException>(Supplier {
                 CustomException((ErrorCode.DOCUMENT_NOT_FOUND))
             })
@@ -23,5 +23,6 @@ class GetScheduleUseCase(
 }
 
 data class GetScheduleQuery(
-    val scheduleId: String
+    val scheduleId: String,
+    val clientId: String
 )
