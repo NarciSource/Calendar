@@ -4,6 +4,7 @@ import com.pickme.calendar.adapter.inbound.web.api.ApiPaths
 import com.pickme.calendar.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.PutScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.request.SearchQueryDto
+import com.pickme.calendar.adapter.inbound.web.dto.response.ErrorResponseDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ScheduleDto
 import com.pickme.calendar.adapter.inbound.web.dto.response.ScheduleIdDto
@@ -11,6 +12,8 @@ import com.pickme.calendar.adapter.inbound.web.mapper.InterviewScheduleMapper
 import com.pickme.calendar.application.usecase.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -22,9 +25,18 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(ApiPaths.V2)
 @Tag(name = "Calendar", description = "면접 캘린더 API")
-@ApiResponse(responseCode = "400", description = "잘못된 요청")
-@ApiResponse(responseCode = "401", description = "권한 없음")
-@ApiResponse(responseCode = "404", description = "면접 일정이 없음")
+@ApiResponse(
+    responseCode = "400", description = "잘못된 요청",
+    content = [Content(schema = Schema(implementation = ErrorResponseDto::class))]
+)
+@ApiResponse(
+    responseCode = "401", description = "권한 없음",
+    content = [Content(schema = Schema(implementation = ErrorResponseDto::class))]
+)
+@ApiResponse(
+    responseCode = "404", description = "면접 일정이 없음",
+    content = [Content(schema = Schema(implementation = ErrorResponseDto::class))]
+)
 class CalendarController(
     private val findSchedules: FindSchedulesUseCase,
     private val getSchedule: GetScheduleUseCase,

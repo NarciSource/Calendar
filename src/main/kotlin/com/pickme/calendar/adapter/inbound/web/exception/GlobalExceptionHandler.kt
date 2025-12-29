@@ -1,6 +1,6 @@
 package com.pickme.calendar.adapter.inbound.web.exception
 
-import com.pickme.calendar.adapter.inbound.web.dto.response.ResponseDto
+import com.pickme.calendar.adapter.inbound.web.dto.response.ErrorResponseDto
 import com.pickme.calendar.application.exception.CustomException
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -22,11 +22,11 @@ class GlobalExceptionHandler {
      * - 전역 ExceptionHandler에서 단일 방식으로 응답 변환
      */
     @ExceptionHandler(CustomException::class)
-    fun handleCustomException(exception: CustomException): ResponseEntity<ResponseDto<Nothing>> =
+    fun handleCustomException(exception: CustomException): ResponseEntity<ErrorResponseDto<Nothing>> =
         ResponseEntity
             .status(exception.errorCode.httpStatus)
             .body(
-                ResponseDto(false, exception.message, null)
+                ErrorResponseDto(false, exception.message, null)
             )
 
     /**
@@ -50,11 +50,11 @@ class GlobalExceptionHandler {
      * - 클라이언트 요청 자체가 잘못되었음을 알리는 400(Bad Request) 응답 반환
      */
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleNotReadable(): ResponseEntity<ResponseDto<Nothing>> =
+    fun handleNotReadable(): ResponseEntity<ErrorResponseDto<Nothing>> =
         ResponseEntity
             .badRequest()
             .body(
-                ResponseDto(false, "요청 본문 형식이 올바르지 않습니다.", null)
+                ErrorResponseDto(false, "요청 본문 형식이 올바르지 않습니다.", null)
             )
 
     /**
@@ -76,7 +76,7 @@ class GlobalExceptionHandler {
      * - 필드 단위 에러 메시지를 구조화하여 클라이언트에 반환
      */
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidation(exception: MethodArgumentNotValidException): ResponseEntity<ResponseDto<*>> {
+    fun handleValidation(exception: MethodArgumentNotValidException): ResponseEntity<ErrorResponseDto<*>> {
         val errors = exception.bindingResult.fieldErrors.associate {
             it.field to (it.defaultMessage ?: "invalid")
         }
@@ -84,7 +84,7 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .badRequest()
             .body(
-                ResponseDto(success = false, message = "요청 값 검증 실패", data = errors)
+                ErrorResponseDto(success = false, message = "요청 값 검증 실패", data = errors)
             )
     }
 
