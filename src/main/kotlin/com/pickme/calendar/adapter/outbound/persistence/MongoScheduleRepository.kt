@@ -7,6 +7,7 @@ import com.pickme.calendar.domain.model.InterviewSchedule
 import com.pickme.calendar.domain.model.InterviewSearchSpec
 import com.pickme.calendar.domain.model.InterviewUpdateSpec
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.find
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository
 import kotlin.time.Clock
 
 @Repository
+@Profile("!openapi")
 @Primary
 class MongoScheduleRepository(
     private val mongoRepo: ScheduleCrudRepository,
