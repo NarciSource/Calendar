@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: calendar
+
+  config:
+    import: optional:file:.env[.properties]
+
+server:
+  servlet:
+    context-path: /calendar
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+security:
+  jwt:
+    secret: ${INTERNAL_JWT_SECRET}

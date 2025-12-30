@@ -42,4 +42,4 @@ out/
 .vscode/
 
 ### .env ###
-.env
+.env.local
