@@ -7,6 +7,8 @@ import com.pickme.calendar.domain.model.InterviewUpdateSpec
 interface ScheduleRepository {
     fun findByScheduleId(scheduleId: String, clientId: String): InterviewSchedule?
 
+    fun findByScheduleIdIn(scheduleIds: List<String>): List<InterviewSchedule>
+
     fun find(search: InterviewSearchSpec, clientId: String): List<InterviewSchedule>
 
     fun save(schedule: InterviewSchedule): InterviewSchedule

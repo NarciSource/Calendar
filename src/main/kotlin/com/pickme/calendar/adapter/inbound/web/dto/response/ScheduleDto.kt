@@ -11,6 +11,9 @@ data class ScheduleDto(
     @field:Schema(description = "일정 ID", example = "694d1d9462a47e4039250532")
     val id: String,
 
+    @field:Schema(description = "유저 ID", example = "user")
+    val clientId: String,
+
     @field:Schema(description = "생성 시간", example = "2025-03-05T13:43:35.901")
     val createdAt: LocalDateTime,
 

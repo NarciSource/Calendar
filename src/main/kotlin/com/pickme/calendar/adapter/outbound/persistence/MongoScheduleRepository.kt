@@ -14,19 +14,21 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.data.mongodb.core.updateFirst
-import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 import kotlin.time.Clock
 
 @Repository
 @Primary
 class MongoScheduleRepository(
-    private val mongoRepo: SpringDataScheduleRepository,
+    private val mongoRepo: ScheduleCrudRepository,
     private val mongoTemplate: MongoTemplate
 ) : ScheduleRepository {
 
     override fun findByScheduleId(scheduleId: String, clientId: String): InterviewSchedule? =
         mongoRepo.findByIdAndClientId(scheduleId, clientId)
+
+    override fun findByScheduleIdIn(scheduleIds: List<String>): List<InterviewSchedule> =
+        mongoRepo.findByIdIn(scheduleIds)
 
     override fun find(search: InterviewSearchSpec, clientId: String): List<InterviewSchedule> {
         val query = Query()
@@ -96,12 +98,6 @@ class MongoScheduleRepository(
 
     override fun deleteByScheduleId(scheduleId: String, clientId: String) =
         mongoRepo.deleteByIdAndClientId(scheduleId, clientId)
-}
-
-interface SpringDataScheduleRepository : MongoRepository<InterviewSchedule, String> {
-    fun findByIdAndClientId(id: String, clientId: String): InterviewSchedule?
-
-    fun deleteByIdAndClientId(id: String, clientId: String)
 }
 
 fun Query.andIfNotNull(criteria: Criteria?) = apply {
