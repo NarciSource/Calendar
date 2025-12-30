@@ -16,10 +16,11 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -50,11 +51,12 @@ class CalendarController(
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
     @GetMapping("/schedule")
     fun getSchedule(
-        request: HttpServletRequest,
+        @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String
     ): ResponseEntity<ResponseDto<ScheduleDto>> {
-        val clientId = request.getAttribute("clientId") as String
+
+        val clientId = jwt.subject
 
         val schedule = getSchedule.execute(
             GetScheduleQuery(scheduleId, clientId)
@@ -71,10 +73,11 @@ class CalendarController(
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
     @GetMapping("/schedules")
     fun searchSchedules(
-        request: HttpServletRequest,
+        @AuthenticationPrincipal jwt: Jwt,
         @ParameterObject searchQueryDto: SearchQueryDto,
     ): ResponseEntity<ResponseDto<List<ScheduleDto>>> {
-        val clientId = request.getAttribute("clientId") as String
+
+        val clientId = jwt.subject
         val search = scheduleMapper.toEntity(searchQueryDto)
 
         val found = findSchedules.execute(
@@ -92,10 +95,11 @@ class CalendarController(
     @ApiResponse(responseCode = "200", description = "면접 일정 추가 성공")
     @PostMapping("/schedule")
     fun createSchedule(
-        request: HttpServletRequest,
+        @AuthenticationPrincipal jwt: Jwt,
         @Valid @RequestBody postScheduleDto: PostScheduleDto
     ): ResponseEntity<ResponseDto<ScheduleIdDto>> {
-        val clientId = request.getAttribute("clientId") as String
+
+        val clientId = jwt.subject
 
         val schedule = scheduleMapper.toEntity(postScheduleDto, clientId)
 
@@ -112,12 +116,13 @@ class CalendarController(
     @ApiResponse(responseCode = "200", description = "면접 일정 수정 성공")
     @PutMapping("/schedule")
     fun updateSchedule(
-        request: HttpServletRequest,
+        @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String,
         @Valid @RequestBody putScheduleDto: PutScheduleDto
     ): ResponseEntity<ResponseDto<Nothing>> {
-        val clientId = request.getAttribute("clientId") as String
+
+        val clientId = jwt.subject
         val changes = scheduleMapper.toEntity(putScheduleDto)
 
         updateSchedule.execute(
@@ -134,11 +139,12 @@ class CalendarController(
     @ApiResponse(responseCode = "200", description = "면접 일정 삭제 성공")
     @DeleteMapping("/schedule")
     fun deleteSchedule(
-        request: HttpServletRequest,
+        @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
         @RequestParam scheduleId: String
     ): ResponseEntity<ResponseDto<Nothing>> {
-        val clientId = request.getAttribute("clientId") as String
+
+        val clientId = jwt.subject
 
         deleteSchedule.execute(
             DeleteScheduleCommand(scheduleId, clientId)
