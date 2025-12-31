@@ -2,7 +2,6 @@ package com.pickme.calendar.infrastructure.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -25,9 +24,9 @@ class SecurityConfig {
                         "/v3/api-docs/**",
                     ).permitAll()
 
-                    // Health Check
+                    // Actuator health
                     .requestMatchers(
-                        "/",
+                        "/actuator/health**",
                     ).permitAll()
 
                     // Internal API
@@ -43,17 +42,6 @@ class SecurityConfig {
             }
             .oauth2ResourceServer {
                 it.jwt {} // JWT 검증. JwtDecoder 자동 감지
-
-                it.authenticationEntryPoint { _, response, _ ->
-                    response.status = HttpStatus.UNAUTHORIZED.value()
-                    response.writer.write("INVALID_AUTH_TOKEN")
-                }
-            }
-            .exceptionHandling {
-                it.accessDeniedHandler { _, response, _ ->
-                    response.status = HttpStatus.FORBIDDEN.value()
-                    response.writer.write("FORBIDDEN")
-                }
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 거부
