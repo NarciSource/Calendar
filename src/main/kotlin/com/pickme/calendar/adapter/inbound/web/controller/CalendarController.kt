@@ -49,11 +49,11 @@ class CalendarController(
 
     @Operation(summary = "면접 일정 조회", description = "scheduleId에 해당하는 면접 일정 조회")
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
-    @GetMapping("/schedule")
+    @GetMapping("/schedule/{scheduleId}")
     fun getSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @RequestParam scheduleId: String
+        @PathVariable scheduleId: String
     ): ResponseEntity<ResponseDto<ScheduleDto>> {
 
         val clientId = jwt.subject
@@ -114,11 +114,11 @@ class CalendarController(
 
     @Operation(summary = "면접 일정 수정", description = "scheduleId에 해당하는 면접 일정 수정")
     @ApiResponse(responseCode = "200", description = "면접 일정 수정 성공")
-    @PutMapping("/schedule")
+    @PutMapping("/schedule/{scheduleId}")
     fun updateSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @RequestParam scheduleId: String,
+        @PathVariable scheduleId: String,
         @Valid @RequestBody putScheduleDto: PutScheduleDto
     ): ResponseEntity<ResponseDto<Nothing>> {
 
@@ -137,11 +137,11 @@ class CalendarController(
     // 면접 일정 삭제
     @Operation(summary = "면접 일정 삭제", description = "scheduleId에 해당하는 면접 일정 삭제")
     @ApiResponse(responseCode = "200", description = "면접 일정 삭제 성공")
-    @DeleteMapping("/schedule")
+    @DeleteMapping("/schedule/{scheduleId}")
     fun deleteSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @RequestParam scheduleId: String
+        @PathVariable scheduleId: String
     ): ResponseEntity<ResponseDto<Nothing>> {
 
         val clientId = jwt.subject
