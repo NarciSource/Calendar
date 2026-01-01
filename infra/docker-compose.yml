@@ -1,0 +1,28 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+
+    networks:
+      - net
+    ports:
+      - ${MONGODB_PORT}:27017
+
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
+    volumes:
+      - mongo-data:/data/db
+
+    healthcheck:
+      test: >
+        mongosh --quiet
+        -u ${MONGODB_USERNAME}
+        -p ${MONGODB_PASSWORD}
+        --authenticationDatabase admin
+        --eval "db.adminCommand('ping').ok"
+
+volumes:
+  mongo-data:
+    driver: local
