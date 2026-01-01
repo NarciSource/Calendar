@@ -1,0 +1,40 @@
+services:
+  schedule-api:
+    image: calendar/schedule-api:${SERVER_VERSION}
+    container_name: schedule-api
+    build:
+      context: apps/schedule-api
+      dockerfile: Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - ${SERVER_PORT}:8080
+
+    env_file:
+      - apps/schedule-api/.env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8080/calendar/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+include:
+  - ./infra/docker-compose.yml
+
+networks:
+  net:
+    name: calendar-net
+    driver: bridge
