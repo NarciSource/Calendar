@@ -1,6 +1,6 @@
 services:
   schedule-api:
-    image: calendar/schedule-api:${SERVER_VERSION}
+    image: calendar/schedule-api:${SCHEDULE_API_VERSION}
     container_name: schedule-api
     build:
       context: apps/schedule-api
@@ -12,7 +12,7 @@ services:
       mongodb:
         condition: service_healthy
     ports:
-      - ${SERVER_PORT}:8080
+      - ${SCHEDULE_API_PORT}:8080
 
     env_file:
       - apps/schedule-api/.env
@@ -30,6 +30,56 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  reminder-api:
+    image: calendar/reminder-api:${REMINDER_API_VERSION}
+    container_name: reminder-api
+    build:
+      context: apps/reminder
+      dockerfile: ./notification/Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+    ports:
+      - ${REMINDER_API_PORT}:3004
+      - ${REMINDER_MS_PORT}:3006
+
+    env_file:
+      - apps/reminder/.env
+      - apps/reminder/.env.local
+      - apps/reminder/notification/.env
+      - apps/reminder/notification/.env.local
+    environment:
+      - DB_HOST=dynamodb
+
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:3004/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  reminder-worker:
+    image: calendar/reminder-worker:${REMINDER_WORKER_VERSION}
+    container_name: reminder-worker
+    build:
+      context: apps/reminder
+      dockerfile: ./worker/Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      - reminder-api
+    env_file:
+      - apps/reminder/.env
+      - apps/reminder/.env.local
+      - apps/reminder/worker/.env
+      - apps/reminder/worker/.env.local
+    environment:
+      - MS_HOST=reminder-api
 
 include:
   - ./infra/docker-compose.yml
