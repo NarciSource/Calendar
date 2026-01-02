@@ -81,6 +81,23 @@ services:
     environment:
       - MS_HOST=reminder-api
 
+  web-dev:
+    image: calendar/web-dev:${WEB_VERSION}
+    container_name: web-dev
+    build:
+      context: apps/web
+      dockerfile: Dockerfile.dev
+
+    ports:
+      - ${WEB_PORT}:4105
+
+    env_file:
+      - apps/web/.env
+    
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+
 include:
   - ./infra/docker-compose.yml
 
