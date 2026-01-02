@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => {
         },
         server: {
             // 개발 서버 설정
+            host: true,
             port: serverPort,
             cors: true,
         },
