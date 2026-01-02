@@ -1,0 +1,5 @@
+[init]
+    defaultBranch = develop
+
+[commit]
+    template = .gitmessage

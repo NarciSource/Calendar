@@ -1,0 +1,59 @@
+name: Vite Build
+
+on:
+  pull_request: # PR이 열릴 때마다 실행
+    branches:
+      - main
+
+permissions:
+  contents: write # 레포지토리 콘텐츠에 대한 쓰기 권한
+  actions: read # 액션에 대한 읽기 권한
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env: # 환경 변수 설정
+      VITE_MF_TYPE: ${{ vars.VITE_MF_TYPE }}
+      VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci # 의존성 설치
+
+      - name: Run tests
+        run: npm run test # 테스트 실행
+
+      #- name: Lint code
+      #  run: npm run lint # 린트 실행
+
+      - name: Build Vite project
+        env:
+          VITE_PUBLIC_URL: ${{ vars.VITE_GH_PAGE_URL }}
+          VITE_TOKEN_URL: ${{ vars.VITE_GH_PAGE_AUTH_PARCEL_URL }}
+          VITE_STYLEGUIDE_URL: ${{ vars.VITE_GH_PAGE_STYLEGUIDE_URL }}
+        run: |
+          npm run build
+
+      - name: Build Vite For single-spa
+        env:
+          VITE_PUBLIC_URL: ${{ vars.VITE_PUBLIC_URL }}
+          VITE_TOKEN_URL: ${{ vars.VITE_AUTH_PARCEL_URL }}
+          VITE_STYLEGUIDE_URL: ${{ vars.VITE_STYLEGUIDE_URL }}
+        run: |
+          npm run build:single-spa
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4 # 아티팩트를 업로드하는 액션
+        with:
+          name: build-artifact # 아티팩트 이름
+          path: dist

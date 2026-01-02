@@ -1,0 +1,42 @@
+name: Deploy to AWS S3
+
+on:
+  workflow_dispatch: # 수동 실행
+
+  push:
+    tags: # 태그가 푸시될 때 실행
+      - "v*.*.*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get latest run ID # Gradle Build 워크플로우의 ID를 가져옴
+        id: get_run_id
+        run: |
+          run_id=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=success" \
+            | jq '.workflow_runs | map(select(.name == "Vite Build")) | .[0].id')
+            # 다른 워크플로우의 ID를 가져오기 위해 GitHub API를 사용
+          echo "$run_id"
+          echo "run_id=$run_id" >> $GITHUB_ENV # 환경 변수에 저장
+
+      - name: Download artifact from previous workflow
+        uses: actions/download-artifact@v4 # 이전 워크플로우에서 아티팩트를 다운로드하는 액션
+        with:
+          name: build-artifact
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.run_id }} # 이전 워크플로우의 ID
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload file to S3
+        run: |
+          aws s3 sync ${{ vars.TARGET_FILE }} ${{ vars.S3_BUCKET }} --delete
