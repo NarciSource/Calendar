@@ -1,0 +1,105 @@
+name: docs ci/cd
+
+on:
+  workflow_dispatch: # 수동으로 실행 가능
+  push:
+    tags: # 태그가 푸시될 때만 실행
+      - "v*.*.*"
+
+permissions:
+  contents: write # 레포지토리 콘텐츠에 대한 쓰기 권한
+  actions: read # 액션에 대한 읽기 권한
+  pull-requests: write
+
+jobs:
+  test-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "npm" # npm 캐시 사용
+
+      - name: Install dependencies
+        run: npm ci # 의존성 설치
+
+      - name: Make test report
+        run: npm run test # 테스트 리포트 생성 
+
+      - name: Upload coverage reports to Codecov # Codecov에 커버리지 리포트 업로드
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-test-report
+          path: dist
+
+  openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "npm" # npm 캐시 사용  
+
+      - name: Install dependencies
+        run: npm ci # 의존성 설치
+
+      - name: Documentation
+        run: npm run docs # 타입 문서 생성
+
+      - name: Run generate openapi specification
+        run: npm run generate-openapi # OpenAPI 명세서를 생성
+
+      - name: Validate OpenAPI specification
+        run: |
+          npm install -g swagger-cli
+          swagger-cli validate dist/openapi.yaml # OpenAPI 명세서를 검증
+
+      - name: Prepare Swagger UI for GitHub Pages
+        run: |
+          cp .github/document-index.html dist/index.html # Swagger UI를 위한 HTML 파일을 복사
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-openapi
+          path: dist
+
+  deploy-document:
+    needs: [test-report, openapi]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-test-report
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-openapi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2 # GitHub Release를 생성하는 액션
+        with:
+          files: openapi.yaml # 릴리즈에 포함할 파일
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3 # GitHub Pages에 배포하는 액션
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub의 기본 인증 토큰
+          publish_dir: . # GitHub Pages에 배포할 디렉토리
