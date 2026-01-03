@@ -190,7 +190,6 @@ Calendar
       │        └─ MongoScheduleRepository.kt
       └─ infrastructure
           ├─ config
-          │  ├─ WebConfig.kt # 웹 MVC 공통 설정
           │  ├─ JwtConfig.kt # JWT 토큰 검증
           │  ├─ SecurityConfig.kt # Spring Security 필터 체인, 인가/인증 정책 설정
           │  ├─ MongodbConfig.kt # MongoDB 연결
