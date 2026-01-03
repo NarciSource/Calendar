@@ -77,7 +77,7 @@ Gateway &rarr; Backend 간 통신에는 내부 전용 JWT(Internal Token)를 사
   | POST   | `/api/v2/schedule`              | 일정 추가      | Bearer |   -    |    -     | JSON  | USER  |
   | PUT    | `/api/v2/schedule/{scheduleId}` | 일정 수정      | Bearer | String |    -     | JSON  | USER  |
   | DELETE | `/api/v2/schedule/{scheduleId}` | 일정 삭제      | Bearer | String |    -     |   -   | USER  |
-  | GET    | `/api/v2/schedules`             | 일정 조건 조회 | Bearer |   -    | Multiple |   -   | USER  |
+  | GET    | `/api/v2/schedules?`            | 일정 조건 조회 | Bearer |   -    | Multiple |   -   | USER  |
 
 - Internal
   | Method | URI                                | Summary        |  Auth  | Path  |     Query     | Body  |  Role   |
