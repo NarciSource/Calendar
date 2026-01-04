@@ -93,6 +93,10 @@ dependencies {
     // MongoDB
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
+    // Mongock
+    implementation("io.mongock:mongock-springboot-v3:5.5.0")
+    implementation("io.mongock:mongodb-springdata-v4-driver:5.5.0")
+
     // MapStruct
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")

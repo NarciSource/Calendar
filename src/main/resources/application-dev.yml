@@ -2,7 +2,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?authSource=admin
-      auto-index-creation: false
 
 springdoc:
   api-docs:

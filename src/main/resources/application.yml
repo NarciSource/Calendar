@@ -5,6 +5,15 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  data:
+    mongodb:
+      auto-index-creation: false
+
+mongock:
+  migration-scan-package:
+    - com.pickme.calendar.infrastructure.migration.mongock
+  enabled: true
+
 server:
   servlet:
     context-path: /calendar

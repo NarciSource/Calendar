@@ -196,8 +196,8 @@ Calendar
           │  ├─ OpenApiGroupConfig.kt # OpenAPI 그룹 분리 설정
           │  ├─ OpenApiStubConfig.kt # 개발용 OpenAPI 스텁
           │  └─ SwaggerConfig.kt # Swagger UI 메타데이터 설정
-          └─ schema
-             └─ MongoIndexInitializer # 몽고디비 인덱스 초기화
+          └─ migration/mongock # MongoDB 스키마/인덱스 마이그레이션
+             └─ InitScheduleIndexesChangeUnit # 001. 인덱스 초기화
 ```
 
 </details>
