@@ -77,7 +77,7 @@ Gateway &rarr; Backend 간 통신에는 내부 전용 JWT(Internal Token)를 사
   | POST   | `/api/v2/schedule`              | 일정 추가      | Bearer |   -    |    -     | JSON  | USER  |
   | PUT    | `/api/v2/schedule/{scheduleId}` | 일정 수정      | Bearer | String |    -     | JSON  | USER  |
   | DELETE | `/api/v2/schedule/{scheduleId}` | 일정 삭제      | Bearer | String |    -     |   -   | USER  |
-  | GET    | `/api/v2/schedules`             | 일정 조건 조회 | Bearer |   -    | Multiple |   -   | USER  |
+  | GET    | `/api/v2/schedules?`            | 일정 조건 조회 | Bearer |   -    | Multiple |   -   | USER  |
 
 - Internal
   | Method | URI                                | Summary        |  Auth  | Path  |     Query     | Body  |  Role   |
@@ -190,15 +190,14 @@ Calendar
       │        └─ MongoScheduleRepository.kt
       └─ infrastructure
           ├─ config
-          │  ├─ WebConfig.kt # 웹 MVC 공통 설정
           │  ├─ JwtConfig.kt # JWT 토큰 검증
           │  ├─ SecurityConfig.kt # Spring Security 필터 체인, 인가/인증 정책 설정
           │  ├─ MongodbConfig.kt # MongoDB 연결
           │  ├─ OpenApiGroupConfig.kt # OpenAPI 그룹 분리 설정
           │  ├─ OpenApiStubConfig.kt # 개발용 OpenAPI 스텁
           │  └─ SwaggerConfig.kt # Swagger UI 메타데이터 설정
-          └─ schema
-             └─ MongoIndexInitializer # 몽고디비 인덱스 초기화
+          └─ migration/mongock # MongoDB 스키마/인덱스 마이그레이션
+             └─ InitScheduleIndexesChangeUnit # 001. 인덱스 초기화
 ```
 
 </details>

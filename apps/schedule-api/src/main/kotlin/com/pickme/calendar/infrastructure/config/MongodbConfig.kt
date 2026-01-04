@@ -1,5 +1,6 @@
 package com.pickme.calendar.infrastructure.config
 
+import io.mongock.runner.springboot.EnableMongock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 
 @Configuration
+@EnableMongock
 @Profile("!openapi")
 class MongodbConfig {
 
