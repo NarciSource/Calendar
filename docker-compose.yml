@@ -11,8 +11,6 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    ports:
-      - ${SCHEDULE_API_PORT}:8080
 
     env_file:
       - apps/schedule-api/.env
@@ -43,9 +41,6 @@ services:
     depends_on:
       dynamodb:
         condition: service_healthy
-    ports:
-      - ${REMINDER_API_PORT}:3004
-      - ${REMINDER_MS_PORT}:3006
 
     env_file:
       - apps/reminder/.env
