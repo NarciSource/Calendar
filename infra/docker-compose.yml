@@ -32,26 +32,62 @@ services:
       -jar DynamoDBLocal.jar
       -sharedDb
       -dbPath /home/dynamodblocal/data
-  
+
     networks:
       - net
-    ports: 
+    ports:
       - ${DYNAMODB_PORT}:8000
 
     volumes:
       - dynamo-data:/home/dynamodblocal/data
-    
+
     healthcheck:
-      test:
-        ["CMD-SHELL", "curl -s http://localhost:8000 || exit 1"]
+      test: ["CMD-SHELL", "curl -s http://localhost:8000 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  kong:
+    image: kong:3.9.1
+    container_name: kong-container
+
+    command: kong start
+
+    networks:
+      - net
+    ports:
+      - ${SCHEDULE_API_PORT}:8000
+      - ${API_GATEWAY_ADMIN_PORT}:8001
+
+    volumes:
+      - ./kong/kong.conf:/etc/kong/kong.conf
+      - ./kong/kong.yml:/kong/kong.yml
+      - ./kong/plugins:/kong/plugins:ro
+
+  konga:
+    image: pantsel/konga:latest
+    container_name: konga-container
+
+    networks:
+      - net
+    depends_on:
+      - kong
+    ports:
+      - ${API_GATEWAY_UI_PORT}:1337
+
+    environment:
+      - NODE_ENV=development
+      - KONGA_SEED_USER_DATA_SOURCE_FILE=/app/seeds/user_seed.json
+      - KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE=/app/seeds/kong_node_seed.json
+    volumes:
+      - ./kong/konga/seeds:/app/seeds
+      - konga-data:/data
 
 volumes:
   mongo-data:
     driver: local
   dynamo-data:
     driver: local
-
+  konga-data:
+    driver: local

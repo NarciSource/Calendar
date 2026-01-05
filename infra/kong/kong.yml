@@ -1,0 +1,50 @@
+_format_version: "2.1"            # Kong declarative config 버전
+
+upstreams:
+  - name: schedule-upstream       # Upstream 이름: 여러 서버(Target)를 묶어 로드밸런싱하는 그룹
+    targets:
+      - target: schedule-api:8080 # 실제 요청을 받을 서버 호스트:포트
+        weight: 100               # 로드밸런싱 시 해당 서버에 부여할 가중치 (높을수록 요청 비중 증가)
+
+  - name: reminder-upstream
+    targets:
+      - target: reminder-api:3004
+        weight: 100
+
+services:
+  - name: schedule-api            # 서비스 이름: 클라이언트가 접근할 논리적 API
+    host: schedule-upstream       # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
+    routes:
+      - name: schedule-route      # 라우트 이름: 서비스에 연결될 URL 패턴
+        paths:
+          - /calendar             # 하위 모든 경로를 이 라우트가 처리
+        protocols:
+          - http                  # HTTP 요청 허용
+          - https                 # HTTPS 요청 허용
+        strip_path: false         # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
+        methods:                  # HTTP 메서드 제한 (비워두면 모두 허용)
+          - GET
+          - POST
+          - OPTIONS
+        preserve_host: false      # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+
+  - name: reminder-api
+    host: reminder-upstream
+    routes:
+      - name: reminder-route
+        paths:
+          - /reminder
+        protocols:
+          - http
+          - https
+        strip_path: false
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+        preserve_host: false
+
+plugins:
+  - name: custom-field-log
+    config:
+      path: /dev/stdout
