@@ -65,8 +65,29 @@ services:
       - ./kong/kong.yml:/kong/kong.yml
       - ./kong/plugins:/kong/plugins:ro
 
+  konga:
+    image: pantsel/konga:latest
+    container_name: konga-container
+
+    networks:
+      - net
+    depends_on:
+      - kong
+    ports:
+      - ${API_GATEWAY_UI_PORT}:1337
+
+    environment:
+      - NODE_ENV=development
+      - KONGA_SEED_USER_DATA_SOURCE_FILE=/app/seeds/user_seed.json
+      - KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE=/app/seeds/kong_node_seed.json
+    volumes:
+      - ./kong/konga/seeds:/app/seeds
+      - konga-data:/data
+
 volumes:
   mongo-data:
     driver: local
   dynamo-data:
+    driver: local
+  konga-data:
     driver: local
