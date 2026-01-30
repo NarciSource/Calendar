@@ -1,6 +1,12 @@
 _format_version: "2.1"            # Kong declarative config 버전
 
 upstreams:
+  - name: oauth2-proxy-upstream
+    algorithm: round-robin
+    targets:
+      - target: oauth2-proxy:4180
+        weight: 100
+
   - name: keycloak-upstream
     algorithm: round-robin
     targets:
@@ -18,6 +24,14 @@ upstreams:
         weight: 100
 
 services:
+  - name: oauth2-proxy
+    host: oauth2-proxy-upstream
+    routes:
+      - name: oauth2-proxy-route
+        paths:
+          - /oauth2
+        strip_path: false
+
   - name: keycloak
     host: keycloak-upstream
     routes:

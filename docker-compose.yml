@@ -84,6 +84,27 @@ services:
       - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
 
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0-alpine
+    container_name: auth-gateway
+
+    entrypoint: /entrypoint.sh
+
+    networks:
+      - net
+    depends_on:
+      - keycloak
+
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - OAUTH2_PROXY_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - OAUTH2_PROXY_REDIRECT_URL=http://host.docker.internal:8080/oauth2/callback
+      - OAUTH2_PROXY_OIDC_ISSUER_URL=http://host.docker.internal:8080/auth/realms/dev
+    volumes:
+      - ./oauth2-proxy/config.cfg:/etc/oauth2-proxy/config.cfg
+      - ./oauth2-proxy/entrypoint.sh:/entrypoint.sh
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.0
     container_name: identity-provider
