@@ -84,6 +84,24 @@ services:
       - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    container_name: identity-provider
+
+    command:
+      - start
+      - --import-realm
+
+    networks:
+      - net
+
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN}
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - ./keycloak/realm-dev.json:/opt/keycloak/data/import/realm-dev.json
+      - ./keycloak/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+
 volumes:
   mongo-data:
     driver: local
