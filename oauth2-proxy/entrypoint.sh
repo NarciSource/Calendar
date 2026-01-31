@@ -2,7 +2,7 @@
 set -e
 
 # 패키지 설치
-apk add --no-cache curl jq
+apk add --no-cache curl jq gettext
 
 until curl -sf http://keycloak:9000/auth/health/ready; do
   echo "[wait] keycloak not ready yet"
@@ -31,4 +31,5 @@ echo "CLIENT_SECRET: $CLIENT_SECRET"
 export OAUTH2_PROXY_CLIENT_SECRET=$CLIENT_SECRET
 
 # oauth2-proxy 시작
-exec /bin/oauth2-proxy --config=/etc/oauth2-proxy/config.cfg
+envsubst < /etc/oauth2-proxy/config.cfg > /etc/oauth2-proxy/config.runtime.cfg
+exec /bin/oauth2-proxy --config=/etc/oauth2-proxy/config.runtime.cfg

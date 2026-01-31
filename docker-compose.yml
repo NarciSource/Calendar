@@ -57,7 +57,7 @@ services:
     networks:
       - net
     ports:
-      - ${SCHEDULE_API_PORT}:8000
+      - ${PUBLIC_BASE_PORT}:8000
       - ${API_GATEWAY_ADMIN_PORT}:8001
 
     volumes:
@@ -96,11 +96,10 @@ services:
       - keycloak
 
     environment:
+      - BROWSE_ACCESS_URL=http://${PUBLIC_BASE_DOMAIN}:${PUBLIC_BASE_PORT}
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - OAUTH2_PROXY_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-      - OAUTH2_PROXY_REDIRECT_URL=http://host.docker.internal:8080/oauth2/callback
-      - OAUTH2_PROXY_OIDC_ISSUER_URL=http://host.docker.internal:8080/auth/realms/dev
     volumes:
       - ./oauth2-proxy/config.cfg:/etc/oauth2-proxy/config.cfg
       - ./oauth2-proxy/entrypoint.sh:/entrypoint.sh
@@ -117,6 +116,7 @@ services:
       - net
 
     environment:
+      - KC_HOSTNAME=${PUBLIC_BASE_DOMAIN}
       - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN}
       - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
     volumes:
