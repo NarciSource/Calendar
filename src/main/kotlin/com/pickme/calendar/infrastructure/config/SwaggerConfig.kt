@@ -5,11 +5,15 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration // 이 클래스가 스프링의 설정 파일임을 명시하는 어노테이션
-class SwaggerConfig {
+class SwaggerConfig(
+    @param:Value($$"${springdoc.swagger-ui.oauth.browser-access-url}")
+    private val browserAccessUrl: String
+) {
 
     // Swagger API 설정을 위한 Bean을 생성하는 메서드
     @Bean
@@ -23,11 +27,11 @@ class SwaggerConfig {
                     OAuthFlow()
                         .authorizationUrl(
                             // Keycloak의 인증 엔드포인트 URL
-                            "http://localhost:8080/auth/realms/dev/protocol/openid-connect/auth"
+                            "$browserAccessUrl/protocol/openid-connect/auth"
                         )
                         .tokenUrl(
                             // Keycloak의 토큰 발급 엔드포인트 URL
-                            "http://localhost:8080/auth/realms/dev/protocol/openid-connect/token"
+                            "$browserAccessUrl/protocol/openid-connect/token"
                         )
                         .scopes(
                             Scopes().addString("openid", "OpenID Connect")
