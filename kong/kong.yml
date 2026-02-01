@@ -54,7 +54,7 @@ services:
           - GET
           - POST
           - OPTIONS
-        preserve_host: false      # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+        preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
 
   - name: reminder-api
     host: reminder-upstream

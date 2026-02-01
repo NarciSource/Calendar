@@ -113,7 +113,7 @@
       "clientId": "pickme-client",
       "enabled": true,
       "protocol": "openid-connect",
-      "publicClient": false,
+      "publicClient": true,
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "defaultClientScopes": [
@@ -124,7 +124,8 @@
         "audience"
       ],
       "redirectUris": [
-        "http://localhost:8080/oauth2/callback"
+        "/oauth2/callback",
+        "/calendar/swagger-ui/oauth2-redirect.html"
       ]
     }
   ],
