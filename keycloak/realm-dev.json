@@ -30,6 +30,7 @@
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "defaultClientScopes": [
+        "basic",
         "profile",
         "email",
         "roles"
