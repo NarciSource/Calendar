@@ -12,102 +12,15 @@
   "registrationAllowed": true,
   "resetPasswordAllowed": false,
   "roles": {
-    "client": {
-      "pickme-client": [
-        {
-          "name": "user"
-        },
-        {
-          "name": "admin"
-        }
-      ]
-    }
+    "realm": [
+      {
+        "name": "user"
+      },
+      {
+        "name": "admin"
+      }
+    ]
   },
-  "clientScopes": [
-    {
-      "name": "profile",
-      "protocol": "openid-connect"
-    },
-    {
-      "name": "username",
-      "protocol": "openid-connect",
-      "protocolMappers": [
-        {
-          "name": "username",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "username",
-            "claim.name": "preferred_username",
-            "jsonType.label": "String",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true"
-          }
-        }
-      ]
-    },
-    {
-      "name": "email",
-      "protocol": "openid-connect",
-      "protocolMappers": [
-        {
-          "name": "email",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-property-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "email",
-            "claim.name": "email",
-            "jsonType.label": "String",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true"
-          }
-        }
-      ]
-    },
-    {
-      "name": "roles",
-      "protocol": "openid-connect",
-      "protocolMappers": [
-        {
-          "name": "client-roles",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-client-role-mapper",
-          "consentRequired": false,
-          "config": {
-            "clientId": "pickme-client",
-            "rolePrefix": "",
-            "claim.name": "roles",
-            "jsonType.label": "String",
-            "multivalued": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "false",
-            "userinfo.token.claim": "false"
-          }
-        }
-      ]
-    },
-    {
-      "name": "audience",
-      "protocol": "openid-connect",
-      "protocolMappers": [
-        {
-          "name": "audience-mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-audience-mapper",
-          "consentRequired": false,
-          "config": {
-            "included.client.audience": "pickme-client",
-            "id.token.claim": "true",
-            "access.token.claim": "true"
-          }
-        }
-      ]
-    }
-  ],
   "clients": [
     {
       "clientId": "pickme-client",
@@ -118,10 +31,8 @@
       "standardFlowEnabled": true,
       "defaultClientScopes": [
         "profile",
-        "username",
         "email",
-        "roles",
-        "audience"
+        "roles"
       ],
       "redirectUris": [
         "/oauth2/callback",
@@ -137,11 +48,9 @@
       "emailVerified": true,
       "firstName": "admin",
       "lastName": "admin",
-      "clientRoles": {
-        "pickme-client": [
-          "admin"
-        ]
-      },
+      "realmRoles": [
+        "admin"
+      ],
       "credentials": [
         {
           "type": "password",
@@ -157,11 +66,9 @@
       "emailVerified": true,
       "firstName": "Test",
       "lastName": "User",
-      "clientRoles": {
-        "pickme-client": [
-          "user"
-        ]
-      },
+      "realmRoles": [
+        "user"
+      ],
       "credentials": [
         {
           "type": "password",
