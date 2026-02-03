@@ -5,6 +5,12 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/auth/realms/dev/protocol/openid-connect/certs
+
   data:
     mongodb:
       auto-index-creation: false
@@ -23,7 +29,11 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+    oauth:
+      client-id: ${KEYCLOAK_CLIENT_ID}
+      browser-access-url: http://${PUBLIC_BASE_DOMAIN}:${PUBLIC_BASE_PORT}/auth/realms/dev
+      use-pkce-with-authorization-code-grant: true
 
-security:
-  jwt:
-    secret: ${INTERNAL_JWT_SECRET}
+logging:
+  level:
+    org.springframework.security: DEBUG
