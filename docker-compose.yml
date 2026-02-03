@@ -16,6 +16,9 @@ services:
       - apps/schedule-api/.env
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - PUBLIC_BASE_DOMAIN=${PUBLIC_BASE_DOMAIN}
+      - PUBLIC_BASE_PORT=${PUBLIC_BASE_PORT}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - MONGODB_HOST=mongodb
       - MONGODB_PORT=27017
       - MONGODB_USERNAME=${MONGODB_USERNAME}
