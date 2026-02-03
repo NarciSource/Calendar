@@ -1,0 +1,82 @@
+{
+  "realm": "dev",
+  "displayName": "PickMe Calendar",
+  "enabled": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "en",
+    "ko"
+  ],
+  "defaultLocale": "ko",
+  "verifyEmail": false,
+  "registrationAllowed": true,
+  "resetPasswordAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "user"
+      },
+      {
+        "name": "admin"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "pickme-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "redirectUris": [
+        "/oauth2/callback",
+        "/calendar/swagger-ui/oauth2-redirect.html"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@example.com",
+      "emailVerified": true,
+      "firstName": "admin",
+      "lastName": "admin",
+      "realmRoles": [
+        "admin"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "pswd",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "test-user",
+      "enabled": true,
+      "email": "test@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "realmRoles": [
+        "user"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

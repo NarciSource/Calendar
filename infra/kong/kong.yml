@@ -1,6 +1,18 @@
 _format_version: "2.1"            # Kong declarative config 버전
 
 upstreams:
+  - name: oauth2-proxy-upstream
+    algorithm: round-robin
+    targets:
+      - target: oauth2-proxy:4180
+        weight: 100
+
+  - name: keycloak-upstream
+    algorithm: round-robin
+    targets:
+      - target: keycloak:8080
+        weight: 100
+
   - name: schedule-upstream       # Upstream 이름: 여러 서버(Target)를 묶어 로드밸런싱하는 그룹
     targets:
       - target: schedule-api:8080 # 실제 요청을 받을 서버 호스트:포트
@@ -12,6 +24,22 @@ upstreams:
         weight: 100
 
 services:
+  - name: oauth2-proxy
+    host: oauth2-proxy-upstream
+    routes:
+      - name: oauth2-proxy-route
+        paths:
+          - /oauth2
+        strip_path: false
+
+  - name: keycloak
+    host: keycloak-upstream
+    routes:
+      - name: keycloak-route
+        paths:
+          - /auth
+        strip_path: false
+
   - name: schedule-api            # 서비스 이름: 클라이언트가 접근할 논리적 API
     host: schedule-upstream       # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
     routes:
@@ -26,7 +54,7 @@ services:
           - GET
           - POST
           - OPTIONS
-        preserve_host: false      # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+        preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
 
   - name: reminder-api
     host: reminder-upstream

@@ -57,7 +57,7 @@ services:
     networks:
       - net
     ports:
-      - ${SCHEDULE_API_PORT}:8000
+      - ${PUBLIC_BASE_PORT}:8000
       - ${API_GATEWAY_ADMIN_PORT}:8001
 
     volumes:
@@ -83,6 +83,45 @@ services:
     volumes:
       - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0-alpine
+    container_name: auth-gateway
+
+    entrypoint: /entrypoint.sh
+
+    networks:
+      - net
+    depends_on:
+      - keycloak
+
+    environment:
+      - BROWSE_ACCESS_URL=http://${PUBLIC_BASE_DOMAIN}:${PUBLIC_BASE_PORT}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - OAUTH2_PROXY_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+    volumes:
+      - ./oauth2-proxy/config.cfg:/etc/oauth2-proxy/config.cfg
+      - ./oauth2-proxy/entrypoint.sh:/entrypoint.sh
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    container_name: identity-provider
+
+    command:
+      - start
+      - --import-realm
+
+    networks:
+      - net
+
+    environment:
+      - KC_HOSTNAME=${PUBLIC_BASE_DOMAIN}
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KEYCLOAK_ADMIN}
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - ./keycloak/realm-dev.json:/opt/keycloak/data/import/realm-dev.json
+      - ./keycloak/keycloak.conf:/opt/keycloak/conf/keycloak.conf
 
 volumes:
   mongo-data:
