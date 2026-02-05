@@ -23,6 +23,11 @@ upstreams:
       - target: reminder-api:3004
         weight: 100
 
+  - name: web-dev-upstream
+    targets:
+      - target: web-dev:4105
+        weight: 100
+
 services:
   - name: oauth2-proxy
     host: oauth2-proxy-upstream
@@ -71,6 +76,18 @@ services:
           - POST
           - OPTIONS
         preserve_host: false
+
+  - name: web
+    host: web-dev-upstream
+    routes:
+      - name: web-route
+        paths:
+          - /
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
 
 plugins:
   - name: custom-field-log
