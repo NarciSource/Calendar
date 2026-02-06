@@ -36,6 +36,7 @@ services:
         paths:
           - /oauth2
         strip_path: false
+        preserve_host: true
 
   - name: keycloak
     host: keycloak-upstream
@@ -44,6 +45,7 @@ services:
         paths:
           - /auth
         strip_path: false
+        preserve_host: false
 
   - name: schedule-api            # 서비스 이름: 클라이언트가 접근할 논리적 API
     host: schedule-upstream       # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
