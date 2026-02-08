@@ -57,11 +57,21 @@ services:
           - http                  # HTTP 요청 허용
           - https                 # HTTPS 요청 허용
         strip_path: false         # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
-        methods:                  # HTTP 메서드 제한 (비워두면 모두 허용)
-          - GET
-          - POST
-          - OPTIONS
         preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+        plugins:
+          - name: external-auth
+            config:
+              url: http://oauth2-proxy:4180/auth
+
+      - name: schedule-swagger-ui-route
+        paths:
+          - /calendar/swagger-ui.html
+          - /calendar/v3/api-docs
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
 
   - name: reminder-api
     host: reminder-upstream
@@ -73,10 +83,6 @@ services:
           - http
           - https
         strip_path: false
-        methods:
-          - GET
-          - POST
-          - OPTIONS
         preserve_host: false
 
   - name: web
