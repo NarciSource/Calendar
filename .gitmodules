@@ -1,0 +1,4 @@
+[submodule "kong/plugins/external-auth"]
+	path = kong/plugins/external-auth
+	url = https://github.com/NarciSource/kong-plugin-external-auth
+	branch = lua-root
