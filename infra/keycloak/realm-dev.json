@@ -29,6 +29,18 @@
       "publicClient": true,
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "pickme-client",
+            "access.token.claim": "true"
+          }
+        }
+      ],
       "defaultClientScopes": [
         "basic",
         "profile",

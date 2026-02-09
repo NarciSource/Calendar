@@ -23,6 +23,11 @@ upstreams:
       - target: reminder-api:3004
         weight: 100
 
+  - name: web-dev-upstream
+    targets:
+      - target: web-dev:4105
+        weight: 100
+
 services:
   - name: oauth2-proxy
     host: oauth2-proxy-upstream
@@ -31,6 +36,7 @@ services:
         paths:
           - /oauth2
         strip_path: false
+        preserve_host: true
 
   - name: keycloak
     host: keycloak-upstream
@@ -39,6 +45,7 @@ services:
         paths:
           - /auth
         strip_path: false
+        preserve_host: false
 
   - name: schedule-api            # 서비스 이름: 클라이언트가 접근할 논리적 API
     host: schedule-upstream       # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
@@ -50,11 +57,21 @@ services:
           - http                  # HTTP 요청 허용
           - https                 # HTTPS 요청 허용
         strip_path: false         # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
-        methods:                  # HTTP 메서드 제한 (비워두면 모두 허용)
-          - GET
-          - POST
-          - OPTIONS
         preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+        plugins:
+          - name: external-auth
+            config:
+              url: http://oauth2-proxy:4180/auth
+
+      - name: schedule-swagger-ui-route
+        paths:
+          - /calendar/swagger-ui.html
+          - /calendar/v3/api-docs
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
 
   - name: reminder-api
     host: reminder-upstream
@@ -66,11 +83,19 @@ services:
           - http
           - https
         strip_path: false
-        methods:
-          - GET
-          - POST
-          - OPTIONS
         preserve_host: false
+
+  - name: web
+    host: web-dev-upstream
+    routes:
+      - name: web-route
+        paths:
+          - /
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
 
 plugins:
   - name: custom-field-log
