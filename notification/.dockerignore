@@ -1,7 +1,0 @@
-.git
-node_modules
-dist
-test
-jest*
-.env*
-README.md
