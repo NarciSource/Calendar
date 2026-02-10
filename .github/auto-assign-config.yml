@@ -1,8 +1,0 @@
-addAssignees: author
-addReviewers: true
-
-reviewers:
-  - NarciSource
-
-numberOfReviewers: 0
-numberOfAssignees: 0
