@@ -1,9 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import NotificationEntity, { NotificationStatus } from "domain/entity";
-
+import NotificationEntity, { NotificationStatus } from "domain/model/entity";
 import NotificationService from "application/service";
-
 import { ParametersDTO, UpdateRequestDTO } from "../dtos";
 import NotificationsMessageController from "./messageController";
 

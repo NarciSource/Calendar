@@ -3,9 +3,8 @@ import { ApiOperation, ApiTags, ApiBody } from "@nestjs/swagger";
 import { MessagePattern } from "@nestjs/microservices";
 
 import NotificationService from "application/service";
-
+import { PayloadEX } from "../decorators";
 import { ParametersDTO, UpdateRequestDTO } from "../dtos";
-import { PayloadEX } from "utility/decorators";
 
 @Controller("/reminder/message/")
 @ApiTags("TCP API")

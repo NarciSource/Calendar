@@ -1,8 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import INotificationRepository from "domain/repository";
-import NotificationEntity, { NotificationStatus } from "domain/entity";
-
+import NotificationEntity, { NotificationStatus } from "domain/model/entity";
+import INotificationRepository from "./port.out/INotificationRepository";
 import { RegisterRequestDTO, ReadRequestDTO, UpdateRequestDTO, OptionsDTO } from "./dto";
 import NotificationService from "./service";
 

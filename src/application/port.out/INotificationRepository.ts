@@ -1,4 +1,4 @@
-import NotificationEntity, { NotificationStatus } from "./entity";
+import NotificationEntity, { NotificationStatus } from "domain/model/entity";
 
 /**
  * 알림 저장소 인터페이스입니다. 알림 데이터를 생성, 조회, 삭제하는 메서드를 정의합니다.

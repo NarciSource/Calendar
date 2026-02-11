@@ -1,8 +1,8 @@
 import dynamoose from "dynamoose";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { NotificationStatus } from "domain/entity";
-import DynamooseModel from "./model";
+import { NotificationStatus } from "domain/model/entity";
+import DynamooseModel from "./DynamooseModel";
 
 describe("DynamooseModel", () => {
     let dynamooseModel: DynamooseModel;

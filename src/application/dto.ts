@@ -1,4 +1,4 @@
-import { NotificationStatus } from "domain/entity";
+import { NotificationStatus } from "domain/model/entity";
 
 export { NotificationStatus };
 

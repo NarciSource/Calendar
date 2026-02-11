@@ -5,7 +5,7 @@ import { Transport } from "@nestjs/microservices";
 process.env.COGNITO_USER_POOL_ID = "dummy-pool-id";
 process.env.COGNITO_CLIENT_ID = "dummy-client-id";
 
-import { JwtInterceptor } from "./infrastructure/auth/jwtInterceptor";
+import { JwtInterceptor } from "infrastructure/auth/jwtInterceptor";
 import { NotificationModule } from "./module";
 
 jest.mock("@nestjs/core", () => ({

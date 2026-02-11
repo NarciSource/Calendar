@@ -3,8 +3,8 @@ import { promises } from "fs";
 import * as YAML from "yamljs";
 import { NestFactory } from "@nestjs/core";
 
+import generatorSwagger from "infrastructure/config/generatorSwagger";
 import { NotificationModule } from "../module";
-import generatorSwagger from "./generatorSwagger";
 
 /**
  * OpenAPI 명세서를 생성하고 YAML 파일로 저장하는 함수입니다.

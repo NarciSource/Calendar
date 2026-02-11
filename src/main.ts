@@ -2,9 +2,9 @@ import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 
+import generatorSwagger from "infrastructure/config/generatorSwagger";
+import { JwtInterceptor } from "infrastructure/auth/jwtInterceptor";
 import { NotificationModule } from "./module";
-import { JwtInterceptor } from "./infrastructure/auth/jwtInterceptor";
-import generatorSwagger from "./utility/generatorSwagger";
 
 /**
  * 애플리케이션 부트스트랩 함수

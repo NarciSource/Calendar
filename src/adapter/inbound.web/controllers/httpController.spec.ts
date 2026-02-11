@@ -2,10 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 
-import { NotificationStatus } from "domain/entity";
-
+import { NotificationStatus } from "domain/model/entity";
 import NotificationService from "application/service";
-
 import { CreateRequestDTO, ParametersDTO, UpdateRequestDTO } from "../dtos";
 import NotificationController from "./httpController";
 

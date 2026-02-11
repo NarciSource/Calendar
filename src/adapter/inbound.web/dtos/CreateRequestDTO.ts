@@ -2,8 +2,8 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsString, IsDate, IsOptional } from "class-validator";
 
-import { NotificationStatus } from "domain/entity";
-import { TrimSeconds } from "utility/decorators";
+import { NotificationStatus } from "domain/model/entity";
+import { TrimSeconds } from "../decorators";
 
 export default class CreateRequestDTO {
     @IsString()

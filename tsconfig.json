@@ -21,7 +21,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "global.d.ts"],
+  "include": ["src/**/*.ts", "global.d.ts"],
+  "exclude": ["node_modules", "dist", "test"],
   "ts-node": {
     "files": true
   }

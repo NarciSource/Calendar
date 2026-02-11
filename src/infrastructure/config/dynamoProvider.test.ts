@@ -1,6 +1,6 @@
 import * as dynamoose from "dynamoose";
 
-import provider from "./provider";
+import provider from "./dynamoProvider";
 
 jest.mock("dynamoose", () => {
     const original = jest.requireActual("dynamoose");

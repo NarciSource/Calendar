@@ -3,7 +3,7 @@ import { ModelType } from "dynamoose/dist/General";
 import { AnyItem } from "dynamoose/dist/Item";
 import { Inject, Injectable } from "@nestjs/common";
 
-import { NotificationStatus } from "domain/entity";
+import { NotificationStatus } from "domain/model/entity";
 
 /**
  * DynamooseModel 클래스는 DynamoDB와 상호작용하기 위한 Dynamoose 모델을 생성하고 관리합니다.

@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { ModelType } from "dynamoose/dist/General";
 
-import NotificationEntity, { NotificationStatus } from "domain/entity";
-import INotificationRepository from "domain/repository";
-
-import DynamoModel from "./model";
+import NotificationEntity, { NotificationStatus } from "domain/model/entity";
+import INotificationRepository from "application/port.out/INotificationRepository";
+import DynamoModel from "./DynamooseModel";
 
 /**
  * DynamoDB를 사용하여 알림 데이터를 관리하는 저장소 클래스입니다.

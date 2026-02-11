@@ -1,8 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import NotificationEntity from "domain/entity";
-import INotificationRepository from "domain/repository";
-
+import NotificationEntity from "domain/model/entity";
+import INotificationRepository from "./port.out/INotificationRepository";
 import { OptionsDTO, ReadRequestDTO, RegisterRequestDTO, UpdateRequestDTO } from "./dto";
 
 /**
