@@ -1,7 +1,7 @@
 {
   "files": [],
-  "include": ["../notification/src/**/*.ts", "../worker/src/**/*.ts", "./test/**/*.ts"],
-  "exclude": ["node_modules", "dist"],
+  "include": ["../notification/src/**/*.ts", "../worker/src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"],
 
   "compilerOptions": {
     "experimentalDecorators": true, // 데코레이터 기능 활성화
