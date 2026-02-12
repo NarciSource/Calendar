@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ModelType } from "dynamoose/dist/General";
 
 import NotificationEntity, { NotificationStatus } from "domain/model/entity";
-import INotificationRepository from "application/port.out/INotificationRepository";
+import { NotificationRepository } from "application/port.out/NotificationRepository";
 import DynamoModel from "./DynamooseModel";
 
 /**
@@ -10,7 +10,7 @@ import DynamoModel from "./DynamooseModel";
  * `INotificationRepository` 인터페이스를 구현합니다.
  */
 @Injectable()
-export default class DynamoRepository implements INotificationRepository {
+export default class DynamoRepository implements NotificationRepository {
     /**
      * @private
      * @readonly

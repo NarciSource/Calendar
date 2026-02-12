@@ -2,14 +2,14 @@ import { Inject } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
 import NotificationEntity from "domain/model/entity";
-import INotificationRepository from "application/port.out/INotificationRepository";
+import { NotificationRepository } from "application/port.out/NotificationRepository";
 import UpdateCommand from "./Update.command";
 
 @CommandHandler(UpdateCommand)
 export default class UpdateHandler implements ICommandHandler<UpdateCommand> {
     constructor(
-        @Inject("INotificationRepository")
-        private repository: INotificationRepository,
+        @Inject(NotificationRepository)
+        private repository: NotificationRepository,
     ) {}
 
     /**

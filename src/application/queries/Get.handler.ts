@@ -2,14 +2,14 @@ import { Inject } from "@nestjs/common";
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 
 import NotificationEntity from "domain/model/entity";
-import INotificationRepository from "application/port.out/INotificationRepository";
+import { NotificationRepository } from "application/port.out/NotificationRepository";
 import GetQuery from "./Get.query";
 
 @QueryHandler(GetQuery)
 export default class GetHandler implements IQueryHandler<GetQuery> {
     constructor(
-        @Inject("INotificationRepository")
-        private readonly repository: INotificationRepository,
+        @Inject(NotificationRepository)
+        private readonly repository: NotificationRepository,
     ) {}
 
     /**

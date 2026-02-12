@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { CqrsModule } from "@nestjs/cqrs";
 
+import { NotificationRepository } from "application/port.out/NotificationRepository";
 import * as queries from "application/queries";
 import * as commands from "application/commands";
 import HealthCheckController from "adapter/inbound.web/controllers/healthCheckController";
@@ -34,7 +35,6 @@ import DynamooseProvider from "infrastructure/config/dynamoProvider";
  */
 @Module({
     imports: [
-        // 환경 변수 글로벌 설정
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [".env.local", ".env"],
@@ -44,7 +44,7 @@ import DynamooseProvider from "infrastructure/config/dynamoProvider";
     providers: [
         DynamooseProvider,
         {
-            provide: "INotificationRepository", // 인터페이스 제공
+            provide: NotificationRepository, // 인터페이스 제공
             useClass: DynamoRepository, // 구현체 연결
         },
         DynamooseModel,

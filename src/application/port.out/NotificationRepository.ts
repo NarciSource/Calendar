@@ -3,7 +3,7 @@ import NotificationEntity, { NotificationStatus } from "domain/model/entity";
 /**
  * 알림 저장소 인터페이스입니다. 알림 데이터를 생성, 조회, 삭제하는 메서드를 정의합니다.
  */
-export default interface INotificationRepository {
+export interface NotificationRepository {
     /**
      * 새로운 알림 엔티티를 생성합니다.
      *
@@ -42,3 +42,5 @@ export default interface INotificationRepository {
      */
     deleteById(event_id: string): Promise<boolean>;
 }
+
+export const NotificationRepository = Symbol("NotificationRepository");
