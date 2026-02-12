@@ -15,8 +15,7 @@ export default class GetHandler implements IQueryHandler<GetQuery> {
     /**
      * 특정 알림을 조회합니다.
      *
-     * @param {ReadRequestDTO} params - 읽기 요청 데이터 전송 객체
-     * @returns 조회된 알림 엔티티
+     * @param {GetQuery} query - 알림 조회 요청 쿼리 페이로드
      */
     async execute({ event_id }: GetQuery): Promise<NotificationEntity> {
         return this.repository.findById(event_id);

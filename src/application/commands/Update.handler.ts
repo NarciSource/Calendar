@@ -15,7 +15,7 @@ export default class UpdateHandler implements ICommandHandler<UpdateCommand> {
     /**
      * 기존 알림을 업데이트합니다.
      *
-     * @param UpdateCommand 업데이트 요청 DTO
+     * @param {UpdateCommand} command - 업데이트 요청 커맨드 페이로드
      * @returns 업데이트된 알림 엔티티
      * @throws Error 엔티티가 존재하지 않을 경우
      */

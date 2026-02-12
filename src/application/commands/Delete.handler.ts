@@ -14,7 +14,7 @@ export default class DeleteHandler implements ICommandHandler<DeleteCommand> {
     /**
      * 특정 알림을 삭제합니다.
      *
-     * @param {ReadRequestDTO} params - 읽기 요청 데이터 전송 객체
+     * @param {DeleteCommand} command - 삭제 요청 커맨더 페이로드
      * @returns 삭제 성공 여부
      */
     async execute({ event_id }: DeleteCommand): Promise<boolean> {
