@@ -15,6 +15,7 @@
     "generate-openapi": "ts-node -P tsconfig.json --require tsconfig-paths/register src/utility/downloadOpenAPI.ts"
   },
   "dependencies": {
+    "@nestjs/cqrs": "^11.0.3",
     "@nestjs/swagger": "^8.1.0",
     "aws-jwt-verify": "^4.0.1",
     "class-transformer": "^0.5.1",

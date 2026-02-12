@@ -1,0 +1,27 @@
+import { Inject } from "@nestjs/common";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+
+import NotificationEntity from "domain/model/entity";
+import INotificationRepository from "application/port.out/INotificationRepository";
+import UpdateCommand from "./Update.command";
+
+@CommandHandler(UpdateCommand)
+export default class UpdateHandler implements ICommandHandler<UpdateCommand> {
+    constructor(
+        @Inject("INotificationRepository")
+        private repository: INotificationRepository,
+    ) {}
+
+    /**
+     * 기존 알림을 업데이트합니다.
+     *
+     * @param UpdateCommand 업데이트 요청 DTO
+     * @returns 업데이트된 알림 엔티티
+     * @throws Error 엔티티가 존재하지 않을 경우
+     */
+    async execute({ event_id, send_at, status }: UpdateCommand) {
+        const entity = new NotificationEntity(event_id, send_at, status); // 도메인 객체 생성
+
+        return this.repository.create(entity);
+    }
+}
