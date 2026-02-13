@@ -22,6 +22,6 @@ export default class UpdateHandler implements ICommandHandler<UpdateCommand> {
     async execute({ event_id, send_at, status }: UpdateCommand) {
         const entity = new NotificationEntity(event_id, send_at, status); // 도메인 객체 생성
 
-        return this.repository.create(entity);
+        return this.repository.update(event_id, entity);
     }
 }

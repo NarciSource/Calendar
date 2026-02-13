@@ -3,7 +3,7 @@ import { ModelType } from "dynamoose/dist/General";
 
 import NotificationEntity, { NotificationStatus } from "domain/model/entity";
 import { NotificationRepository } from "application/port.out/NotificationRepository";
-import DynamoModel from "./DynamooseModel";
+import DynamooseModel from "./DynamooseModel";
 
 /**
  * DynamoDB를 사용하여 알림 데이터를 관리하는 저장소 클래스입니다.
@@ -23,17 +23,12 @@ export default class DynamoRepository implements NotificationRepository {
 
     /**
      * DynamoDB 모델을 초기화합니다.
-     * @param model DynamoDB 모델을 제공하는 `DynamoModel` 인스턴스
+     * @param model DynamoDB 모델을 제공하는 `DynamooseModel` 인스턴스
      */
-    constructor(model: DynamoModel) {
+    constructor(model: DynamooseModel) {
         this.model = model.getModel();
     }
 
-    /**
-     * 알림 데이터를 생성합니다.
-     * @param eventData 생성할 알림 데이터 (`NotificationEntity` 객체)
-     * @returns 생성된 알림 데이터
-     */
     async create(eventData: NotificationEntity) {
         return this.model.update({
             ...eventData,
@@ -41,23 +36,33 @@ export default class DynamoRepository implements NotificationRepository {
         });
     }
 
-    /**
-     * ID를 사용하여 알림 데이터를 조회합니다.
-     * @param event_id 조회할 알림 데이터의 ID
-     * @returns 조회된 알림 데이터
-     */
+    async replace(event_id: string, entity: NotificationEntity) {
+        return this.model.put({
+            event_id,
+            ...entity,
+            ttl: Math.floor(entity.send_at.getTime() / 1000) + 60 * 60,
+        });
+    }
+
+    async update(event_id: string, entity: Partial<NotificationEntity>) {
+        return this.model.update(
+            { event_id },
+            {
+                $SET: {
+                    ...entity,
+                    ...(entity.send_at && {
+                        ttl: Math.floor(entity.send_at.getTime() / 1000) + 60 * 60,
+                    }),
+                },
+            },
+        );
+    }
+
     async findById(event_id: string) {
         return this.model.get(event_id);
     }
 
-    /**
-     * 예약된 시간과 상태를 기준으로 알림 데이터를 조회합니다.
-     * @param start_time 조회를 시작할 시간
-     * @param _end_time 조회를 종료할 시간 (현재 사용되지 않음)
-     * @param status 조회할 알림의 상태 (`NotificationStatus`)
-     * @returns 조회된 알림 데이터 목록
-     */
-    async findByReservationTime(start_time: Date, _end_time: Date, status: NotificationStatus) {
+    async findBetween(start_time: Date, _end_time: Date, status: NotificationStatus) {
         const start_ts = new Date(start_time).getTime();
 
         return this.model
@@ -69,11 +74,6 @@ export default class DynamoRepository implements NotificationRepository {
             .exec();
     }
 
-    /**
-     * ID를 사용하여 알림 데이터를 삭제합니다.
-     * @param event_id 삭제할 알림 데이터의 ID
-     * @returns 삭제 결과
-     */
     async deleteById(event_id: string) {
         return this.model.delete(event_id);
     }

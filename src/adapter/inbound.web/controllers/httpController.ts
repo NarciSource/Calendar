@@ -10,7 +10,12 @@ import {
 } from "@nestjs/swagger";
 
 import { FindQuery, GetQuery } from "application/queries";
-import { RegisterCommand, DeleteCommand, UpdateCommand } from "application/commands";
+import {
+    RegisterCommand,
+    DeleteCommand,
+    UpdateCommand,
+    ReplaceCommand,
+} from "application/commands";
 import { CreateRequestDTO, ReadRequestDTO, UpdateRequestDTO, ParametersDTO } from "../dtos";
 
 @Controller("/reminder/")
@@ -56,7 +61,7 @@ export default class NotificationHttpController {
     @ApiOperation({ summary: "알림 수정" })
     @ApiResponse({ status: 200, description: "성공적으로 수정" })
     async update(@Param() paramDTO: ReadRequestDTO, @Body() bodyDTO: CreateRequestDTO) {
-        const command = new RegisterCommand(paramDTO.event_id, bodyDTO.send_at, bodyDTO.status);
+        const command = new ReplaceCommand(paramDTO.event_id, bodyDTO.send_at, bodyDTO.status);
 
         return this.command_bus.execute(command);
     }

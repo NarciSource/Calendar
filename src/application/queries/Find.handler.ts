@@ -19,6 +19,6 @@ export default class FindHandler implements IQueryHandler<FindQuery> {
      * @returns 필터링된 알림 엔티티 배열
      */
     async execute({ start_time, end_time, status }: FindQuery): Promise<NotificationEntity[]> {
-        return this.repository.findByReservationTime(start_time, end_time, status);
+        return this.repository.findBetween(start_time, end_time, status);
     }
 }

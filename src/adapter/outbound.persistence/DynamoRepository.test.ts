@@ -69,7 +69,7 @@ describe("DynamoRepository", () => {
         });
     });
 
-    describe("findByReservationTime", () => {
+    describe("findBetween", () => {
         it("예약된 시간과 상태로 알림 데이터를 조회", async () => {
             const start_time = new Date();
             const end_time = new Date();
@@ -78,7 +78,7 @@ describe("DynamoRepository", () => {
 
             model.query("send_at").exec.mockResolvedValue(entities);
 
-            const result = await repository.findByReservationTime(start_time, end_time, status);
+            const result = await repository.findBetween(start_time, end_time, status);
 
             expect(result).toEqual(entities);
             expect(model.query).toHaveBeenCalledWith("send_at");
