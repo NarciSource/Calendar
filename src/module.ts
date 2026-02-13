@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { CqrsModule } from "@nestjs/cqrs";
+import { TerminusModule } from "@nestjs/terminus";
 
 import { NotificationRepository } from "application/port.out/NotificationRepository";
 import * as queries from "application/queries";
@@ -40,6 +41,7 @@ import DynamooseProvider from "infrastructure/config/dynamoProvider";
             envFilePath: [".env.local", ".env"],
         }),
         CqrsModule,
+        TerminusModule,
     ],
     providers: [
         DynamooseProvider,

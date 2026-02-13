@@ -1,14 +1,17 @@
-import { Controller, Get, HttpCode } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { HealthCheck, HealthCheckService } from "@nestjs/terminus";
 
 @Controller("/")
 @ApiTags("Health Check")
 export default class HealthCheckController {
+    constructor(private health: HealthCheckService) {}
+
     @Get()
-    @HttpCode(200)
     @ApiOperation({ summary: "헬스 체크" })
     @ApiResponse({ status: 200, description: "성공적으로 조회" })
-    async healthCheck() {
-        return "OK";
+    @HealthCheck()
+    check() {
+        return this.health.check([]);
     }
 }
