@@ -4,7 +4,7 @@ import { MessagePattern } from "@nestjs/microservices";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { UpdateCommand } from "application/commands";
-import { FindQuery } from "application/queries";
+import { ListQuery } from "application/queries";
 import { PayloadEX } from "../decorators";
 import { ParametersDTO, UpdateRequestDTO } from "../dtos";
 
@@ -24,7 +24,7 @@ export default class NotificationsMessageController {
     @ApiBody({ type: ParametersDTO })
     @MessagePattern({ cmd: "readByOptions" })
     async readByOptions(@PayloadEX(ParametersDTO) payload: ParametersDTO) {
-        const query = new FindQuery(payload.start_time, payload.end_time, payload.status);
+        const query = new ListQuery(payload.start_time, payload.end_time, payload.status);
 
         return this.query_bus.execute(query);
     }

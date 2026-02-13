@@ -9,7 +9,7 @@ import {
     ApiTags,
 } from "@nestjs/swagger";
 
-import { FindQuery, GetQuery } from "application/queries";
+import { ListQuery, GetQuery } from "application/queries";
 import {
     RegisterCommand,
     DeleteCommand,
@@ -51,8 +51,8 @@ export default class NotificationHttpController {
     @ApiOperation({ summary: "알림 옵션 조회" })
     @ApiResponse({ status: 200, description: "성공적으로 조회" })
     @ApiExtraModels(ParametersDTO)
-    async readByOptions(@Query() dto: ParametersDTO) {
-        const query = new FindQuery(dto.start_time, dto.end_time, dto.status);
+    async list(@Query() dto: ParametersDTO) {
+        const query = new ListQuery(dto.start_time, dto.end_time, dto.status);
 
         return this.query_bus.execute(query);
     }
@@ -60,7 +60,7 @@ export default class NotificationHttpController {
     @Put(":event_id")
     @ApiOperation({ summary: "알림 수정" })
     @ApiResponse({ status: 200, description: "성공적으로 수정" })
-    async update(@Param() paramDTO: ReadRequestDTO, @Body() bodyDTO: CreateRequestDTO) {
+    async replace(@Param() paramDTO: ReadRequestDTO, @Body() bodyDTO: CreateRequestDTO) {
         const command = new ReplaceCommand(paramDTO.event_id, bodyDTO.send_at, bodyDTO.status);
 
         return this.command_bus.execute(command);
@@ -69,7 +69,7 @@ export default class NotificationHttpController {
     @Patch(":event_id")
     @ApiOperation({ summary: "알림 일부 수정" })
     @ApiResponse({ status: 200, description: "성공적으로 수정" })
-    async updatePartial(@Param() paramDTO: ReadRequestDTO, @Body() bodyDTO: UpdateRequestDTO) {
+    async update(@Param() paramDTO: ReadRequestDTO, @Body() bodyDTO: UpdateRequestDTO) {
         const command = new UpdateCommand(paramDTO.event_id, bodyDTO.send_at, bodyDTO.status);
 
         return this.command_bus.execute(command);

@@ -1,6 +1,6 @@
 import { NotificationStatus } from "domain/model/entity";
 
-export default class FindQuery {
+export default class ListQuery {
     /**
      * @param [start_time] - 검색할 알림의 시작 시간 (선택적)
      * @param [end_time] - 검색할 알림의 종료 시간 (선택적)
