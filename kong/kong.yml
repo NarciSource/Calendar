@@ -84,6 +84,20 @@ services:
           - https
         strip_path: false
         preserve_host: false
+        plugins:
+          - name: external-auth
+            config:
+              url: http://oauth2-proxy:4180/auth
+
+      - name: reminder-swagger-ui-route
+        paths:
+          - /reminder/swagger-ui.html
+          - /reminder/v3/api-docs
+        protocols:
+          - http
+          - https
+        strip_path: false
+        preserve_host: true
 
   - name: web
     host: web-dev-upstream
