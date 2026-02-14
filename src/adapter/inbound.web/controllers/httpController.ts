@@ -1,13 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
 import { QueryBus, CommandBus } from "@nestjs/cqrs";
-import {
-    ApiBearerAuth,
-    ApiExtraModels,
-    ApiOperation,
-    ApiParam,
-    ApiResponse,
-    ApiTags,
-} from "@nestjs/swagger";
+import { ApiExtraModels, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { ListQuery, GetQuery } from "application/queries";
 import {
@@ -20,7 +13,6 @@ import { CreateRequestDTO, ReadRequestDTO, UpdateRequestDTO, ParametersDTO } fro
 
 @Controller("/reminder/")
 @ApiTags("HTTP API")
-@ApiBearerAuth()
 @ApiResponse({ status: 401, description: "권한 없음" })
 @ApiResponse({ status: 400, description: "입력 값 오류" })
 export default class NotificationHttpController {
