@@ -5,7 +5,7 @@ process.env.COGNITO_USER_POOL_ID = "dummy-pool-id";
 process.env.COGNITO_CLIENT_ID = "dummy-client-id";
 
 import { JwtInterceptor } from "./jwtInterceptor";
-import verifier from "./verifier";
+import verifyJwt from "./verifyJwt";
 
 jest.mock("aws-jwt-verify", () => {
     return {
@@ -72,7 +72,7 @@ describe("JwtInterceptor", () => {
             }),
         });
 
-        (verifier.verify as jest.Mock).mockRejectedValue(new Error("Invalid token"));
+        (verifyJwt as jest.Mock).mockRejectedValue(new Error("Invalid token"));
 
         await expect(
             interceptor.intercept(
@@ -91,7 +91,7 @@ describe("JwtInterceptor", () => {
             }),
         });
 
-        (verifier.verify as jest.Mock).mockResolvedValue(mockUser);
+        (verifyJwt as jest.Mock).mockResolvedValue(mockUser);
 
         const result = await interceptor.intercept(
             mockExecutionContext as ExecutionContext,
