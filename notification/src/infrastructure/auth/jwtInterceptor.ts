@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 
-import verifier from "./verifier";
+import verifyJwt from "./verifyJwt";
 
 /**
  * JWT 토큰을 검증하고 요청 객체에 사용자 정보를 추가하는 NestJS 인터셉터입니다.
@@ -42,7 +42,8 @@ export class JwtInterceptor implements NestInterceptor {
         }
 
         try {
-            const decoded = await verifier.verify(token); // cognito의 jwt token 검증
+            const decoded = await verifyJwt(token); // jwt token 검증
+
             request.user = decoded; // request에 user 정보 추가
         } catch (error) {
             throw new UnauthorizedException("Invalid JWT token", error);

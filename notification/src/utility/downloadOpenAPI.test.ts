@@ -3,8 +3,8 @@ import { promises as fsPromises } from "fs";
 import { NestFactory } from "@nestjs/core";
 import * as YAML from "yamljs";
 
+import generatorSwagger from "infrastructure/config/generatorSwagger";
 import { NotificationModule } from "../module";
-import generatorSwagger from "./generatorSwagger";
 import { openapi } from "./downloadOpenAPI";
 
 jest.mock("@nestjs/core", () => ({
