@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { INotificationSender } from "application/ports";
-import { EventDetail } from "application/dto";
+import { Schedule } from "application/dto";
 
 import { OnesignalClient } from "../api/onesignalClient";
 
@@ -23,7 +23,7 @@ export class WebNotificationSender implements INotificationSender {
     /**
      * 알림을 전송합니다.
      *
-     * @param {EventDetail} params - 알림에 필요한 이벤트 세부 정보
+     * @param {Schedule} params - 알림에 필요한 이벤트 세부 정보
      *
      * @returns {Promise<void>} 알림 전송 작업이 완료되면 반환됩니다.
      *
@@ -31,19 +31,19 @@ export class WebNotificationSender implements INotificationSender {
      */
     async dispatch({
         company: { name: companyName, location },
-        interviewTime,
+        date,
         position,
         category,
         description,
         clientId,
-    }: EventDetail): Promise<void> {
+    }: Schedule): Promise<void> {
         try {
             const external_id = [clientId]; // 호출할 ID
 
             const response = await this.client.post(null, {
                 target_channel: "push",
                 contents: {
-                    en: `${companyName}\n${description}\n${location}\n${new Date(interviewTime).toLocaleTimeString()}\n${position} ${category}`,
+                    en: `${companyName}\n${description}\n${location}\n${new Date(date).toLocaleTimeString()}\n${position} ${category}`,
                 },
                 include_aliases: {
                     external_id,

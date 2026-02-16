@@ -4,7 +4,7 @@ declare global {
             CRON_SCHEDULE: string;
             NOTIFICATION_READ_RANGE: string;
 
-            CALENDAR_API_URL: string;
+            SCHEDULE_API_URL: string;
             ONESIGNAL_APP_ID: string;
             ONESIGNAL_API_KEY: string;
 

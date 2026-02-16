@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { IEventReceiver } from "application/ports";
-import { EventDetail } from "application/dto";
+import { ResponseDTO, Schedule } from "application/dto";
 
 import { CalendarClient } from "../api";
 
@@ -23,20 +23,20 @@ export class CalendarEventReceiver implements IEventReceiver {
      *
      * @param {Object} params - 이벤트 ID를 포함하는 객체
      * @param {string} params.event_id - 조회할 이벤트의 ID
-     * @returns {Promise<EventDetail>} 이벤트 상세 정보
+     * @returns {Promise<Schedule>} 이벤트 상세 정보
      * @throws {Error} 이벤트 ID에 대한 상세 정보가 없거나 API 호출 실패 시 에러를 발생시킵니다.
      */
-    async receive({ event_id }: { event_id: string }): Promise<EventDetail> {
-        const { status, data: event_detail }: { status: number; data: EventDetail } =
-            await this.client.get(null, {
-                params: {
-                    interviewDetailId: event_id,
-                },
-            });
+    async receive({ event_id }: { event_id: string }): Promise<Schedule> {
+        const {
+            status,
+            data: { success, data: schedule },
+        }: { status: number; data: ResponseDTO<Schedule> } = await this.client.get<
+            ResponseDTO<Schedule>
+        >(`/${event_id}`);
 
         if (status === 200) {
-            if (event_detail) {
-                return event_detail;
+            if (success) {
+                return schedule;
             } else {
                 throw new Error("해당 이벤트 ID에 대한 상세 정보가 없습니다.");
             }
