@@ -52,6 +52,9 @@ services:
       - apps/reminder/notification/.env.local
     environment:
       - DB_HOST=dynamodb
+      - PUBLIC_BASE_DOMAIN=${PUBLIC_BASE_DOMAIN}
+      - PUBLIC_BASE_PORT=${PUBLIC_BASE_PORT}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
 
     healthcheck:
       test:
@@ -86,9 +89,8 @@ services:
       context: apps/web
       dockerfile: Dockerfile.dev
 
-    ports:
-      - ${WEB_PORT}:4105
-
+    networks:
+      - net
     env_file:
       - apps/web/.env
     
