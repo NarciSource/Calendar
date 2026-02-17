@@ -1,3 +1,9 @@
+export interface ResponseDTO<T> {
+    success: boolean,
+    message: string,
+    data: T
+}
+
 export interface PutCompanyDTO {
     name: string
     location: string
@@ -5,15 +11,10 @@ export interface PutCompanyDTO {
 
 export interface PutInterviewDetailDTO {
     company: PutCompanyDTO
-    interviewTime: string
+    date: string
     position: string
     category: string
     description: string
-}
-
-export interface PutApiResponseDTO {
-    success: string
-    message: string
 }
 
 export interface PostCompanyDTO {
@@ -23,21 +24,14 @@ export interface PostCompanyDTO {
 
 export interface PostInterviewDetailDTO {
     company: PostCompanyDTO
-    interviewTime: string
+    date: string
     position: string
     category: string
     description: string
 }
 
 export interface PostApiResponseDTO {
-    success: string
-    message: string
-    interviewDetailId: string
-}
-
-export interface GetCalendarDTO {
-    clientId: string
-    interviewDetails: GetInterviewDetailDTO[]
+    id: string
 }
 
 export interface GetCompanyDTO {
@@ -46,25 +40,11 @@ export interface GetCompanyDTO {
 }
 
 export interface GetInterviewDetailDTO {
-    interviewDetailId: string
+    id: string
+    clientId?: string
     company: GetCompanyDTO
-    interviewTime: string
+    date: string
     position: string
     category: string
     description: string
-}
-
-export interface GetInterviewDTO {
-    clientId: string
-    interviewDetailId: string
-    company: GetCompanyDTO
-    interviewTime: string
-    position: string
-    category: string
-    description: string
-}
-
-export interface DeleteApiResponseDTO {
-    success: string
-    message: string
 }

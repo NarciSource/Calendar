@@ -63,7 +63,7 @@ const EventForm = ({ newEvent, onChange, onAdd }: EventFormProps) => {
       <EventInputField
         placeholder="면접 시간"
         name="interviewTime"
-        value={eventData.interviewTime}
+        value={eventData.date}
         onChange={handleInputChange}
       />
 

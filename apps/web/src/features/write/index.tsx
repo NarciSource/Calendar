@@ -17,17 +17,23 @@ import {
   selectedDateAtom,
 } from "../atom/writeAtom";
 
+const getMonthRange = (date: Date) => ({
+  from: new Date(date.getFullYear(), date.getMonth(), 1).toLocaleDateString("sv-SE"),
+  to: new Date(date.getFullYear(), date.getMonth() + 1, 1).toLocaleDateString("sv-SE"),
+})
+
 const CalendarMain = () => {
   const [selectedDate, setSelectedDate] = useAtom(selectedDateAtom);
   const [events, setEvents] = useAtom(eventsAtom);
   const [currentMonth] = useAtom(currentMonthAtom);
 
-  const month = currentMonth.toLocaleDateString("sv-SE").slice(0, 7);
+  const { from, to } = getMonthRange(currentMonth)
+
   const dateKey = selectedDate!.toLocaleDateString("sv-SE");
 
   const { data: fetchedEvents } = useQuery({
-    queryKey: ["calendar", month],
-    queryFn: () => getCalendar(month),
+    queryKey: ["calendar", from],
+    queryFn: () => getCalendar(from, to),
     staleTime: 1000 * 60 * 60,
   });
 
@@ -65,7 +71,7 @@ const CalendarMain = () => {
   const handleAddEvent = async (newEvent: Interview) => {
     if (!selectedDate) return;
 
-    newEvent.interviewTime = `${dateKey}T${newEvent.interviewTime}`;
+    newEvent.date = `${dateKey}T${newEvent.interviewTime}`;
 
     try {
       await createInterview(newEvent);
@@ -87,8 +93,8 @@ const CalendarMain = () => {
     if (!eventToDelete) return;
 
     try {
-      await deleteInterview(eventToDelete.interviewDetailId);
-      console.log(`Deleted event with ID: ${eventToDelete.interviewDetailId}`);
+      await deleteInterview(eventToDelete.id);
+      console.log(`Deleted event with ID: ${eventToDelete.id}`);
 
       setEvents((prev) => {
         const updatedEvents = [...(prev[dateKey] || [])];
@@ -106,7 +112,7 @@ const CalendarMain = () => {
     updatedEvent.interviewTime = `${dateKey}T${updatedEvent.interviewTime}`;
 
     try {
-      await updateInterview(updatedEvent.interviewDetailId, updatedEvent);
+      await updateInterview(updatedEvent.id, updatedEvent);
 
       setEvents((prev) => {
         const updatedEvents = [...(prev[dateKey] || [])];

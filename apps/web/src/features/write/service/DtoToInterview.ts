@@ -1,5 +1,5 @@
 import { Interview } from "../../../entities/events/model/Interview";
-import { GetCalendarDTO, GetInterviewDetailDTO } from "../api/calendarDTOList";
+import { GetInterviewDetailDTO } from "../api/calendarDTOList";
 
 const formatInterviewTime = (isoString: string): string => {
     if (!isoString) return "시간 미정";
@@ -19,21 +19,21 @@ const formatInterviewTime = (isoString: string): string => {
 export function DtoToInterview(dto: GetInterviewDetailDTO): Interview {
     return new Interview(
         dto.company,
-        formatInterviewTime(dto.interviewTime),
+        formatInterviewTime(dto.date),
         dto.position,
         dto.category,
         dto.description,
-        dto.interviewDetailId
+        dto.id
     );
 }
 
-export function DtoToCalendarEvents(dto: GetCalendarDTO): Record<string, Interview[]> {
+export function DtoToCalendarEvents(dto: GetInterviewDetailDTO[]): Record<string, Interview[]> {
     const events: Record<string, Interview[]> = {};
 
-    dto.interviewDetails.forEach((interviewDetail) => {
-        if (!interviewDetail.interviewTime) return;
+    dto.forEach((event) => {
+        if (!event.date) return;
 
-        const date = new Date(interviewDetail.interviewTime);
+        const date = new Date(event.date);
         const dateKey = date.toLocaleDateString("sv-SE");
 
         console.log("dateKey:", dateKey);
@@ -42,7 +42,7 @@ export function DtoToCalendarEvents(dto: GetCalendarDTO): Record<string, Intervi
             events[dateKey] = [];
         }
 
-        events[dateKey].push(DtoToInterview(interviewDetail));
+        events[dateKey].push(DtoToInterview(event));
     });
 
     return events;

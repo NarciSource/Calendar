@@ -92,7 +92,7 @@ const EventList = ({ onDelete, onUpdate }: EventListProps) => {
               <EventInputField
                 placeholder="면접 시간"
                 name="interviewTime"
-                value={editEvent?.interviewTime || ""}
+                value={editEvent?.date || ""}
                 onChange={handleInputChange}
               />
               <EventInputField
@@ -129,7 +129,7 @@ const EventList = ({ onDelete, onUpdate }: EventListProps) => {
               <Text fontWeight="bold">회사명: {event.company?.name}</Text>
               <Text>면접 유형: {event.category}</Text>
               <Text>면접 장소: {event.company?.location}</Text>
-              <Text>면접 시간: {event.interviewTime}</Text>
+              <Text>면접 시간: {event.date}</Text>
               <Text>지원 직무: {event.position}</Text>
               <Text>메모: {event.description}</Text>
               <Flex gap={2} mt={2} justifyContent="flex-end">
