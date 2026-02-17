@@ -4,10 +4,10 @@ import axios from "axios";
 jest.mock("axios");
 
 describe("CalendarClient", () => {
-    const CALENDAR_API_URL = "http://mock-calendar-api.com";
+    const SCHEDULE_API_URL = "http://mock-calendar-api.com";
 
     beforeEach(() => {
-        process.env.CALENDAR_API_URL = CALENDAR_API_URL;
+        process.env.SCHEDULE_API_URL = SCHEDULE_API_URL;
     });
 
     afterEach(() => {
@@ -19,7 +19,7 @@ describe("CalendarClient", () => {
 
         expect(calendarClient).toBeDefined();
         expect((axios.create as jest.Mock).mock.calls[0][0]).toEqual({
-            baseURL: CALENDAR_API_URL,
+            baseURL: SCHEDULE_API_URL,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",

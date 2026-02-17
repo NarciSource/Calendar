@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { EventDetail } from "application/dto";
+import { Schedule } from "application/dto";
 
 import { OnesignalClient } from "../api/onesignalClient";
 import { WebNotificationSender } from "./webSender";
@@ -8,7 +8,7 @@ import { WebNotificationSender } from "./webSender";
 describe("WebNotificationSender", () => {
     let webNotificationSender: WebNotificationSender;
     let onesignalClient: OnesignalClient;
-    let eventDetail: EventDetail;
+    let schedule: Schedule;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -26,10 +26,10 @@ describe("WebNotificationSender", () => {
         webNotificationSender = module.get<WebNotificationSender>(WebNotificationSender);
         onesignalClient = module.get<OnesignalClient>(OnesignalClient);
 
-        eventDetail = {
-            interviewDetailId: "67890",
+        schedule = {
+            id: "67890",
             company: { name: "Test Company", location: "Test Location" },
-            interviewTime: new Date(),
+            date: new Date(),
             position: "Developer",
             category: "Engineering",
             description: "Test Description",
@@ -41,15 +41,15 @@ describe("WebNotificationSender", () => {
         const response = { data: "success" };
         jest.spyOn(onesignalClient, "post").mockResolvedValue(response);
 
-        await webNotificationSender.dispatch(eventDetail);
+        await webNotificationSender.dispatch(schedule);
 
         expect(onesignalClient.post).toHaveBeenCalledWith(null, {
             target_channel: "push",
             contents: {
-                en: `${eventDetail.company.name}\n${eventDetail.description}\n${eventDetail.company.location}\n${new Date(eventDetail.interviewTime).toLocaleTimeString()}\n${eventDetail.position} ${eventDetail.category}`,
+                en: `${schedule.company.name}\n${schedule.description}\n${schedule.company.location}\n${new Date(schedule.date).toLocaleTimeString()}\n${schedule.position} ${schedule.category}`,
             },
             include_aliases: {
-                external_id: [eventDetail.clientId],
+                external_id: [schedule.clientId],
             },
         });
     });
@@ -60,7 +60,7 @@ describe("WebNotificationSender", () => {
 
         console.error = jest.fn();
 
-        await webNotificationSender.dispatch(eventDetail);
+        await webNotificationSender.dispatch(schedule);
 
         expect(console.error).toHaveBeenCalledWith("Error sending notification:", error.message);
     });

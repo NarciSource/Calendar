@@ -63,9 +63,6 @@ describe("WorkerService", () => {
 
         jest.spyOn(client, "ensureConnected").mockResolvedValue(Promise.resolve());
         jest.spyOn(client, "readByOptions").mockResolvedValue(mockNotifications);
-        jest.spyOn(receiver, "receive").mockImplementation((notification) =>
-            Promise.resolve(notification),
-        );
         jest.spyOn(sender, "dispatch").mockImplementation(() => Promise.resolve());
         jest.spyOn(client, "updatePartial").mockImplementation((notification) =>
             Promise.resolve({ ...notification, send_at: new Date() } as NotificationEntity),
