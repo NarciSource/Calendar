@@ -2,9 +2,9 @@ import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 
+import generatorSwagger from "infrastructure/config/generatorSwagger";
+import { JwtInterceptor } from "infrastructure/auth/jwtInterceptor";
 import { NotificationModule } from "./module";
-import { JwtInterceptor } from "./infrastructure/auth/jwtInterceptor";
-import generatorSwagger from "./utility/generatorSwagger";
 
 /**
  * 애플리케이션 부트스트랩 함수
@@ -29,6 +29,9 @@ import generatorSwagger from "./utility/generatorSwagger";
 export async function bootstrap(): Promise<void> {
     // 알림 서비스 생성
     const app = await NestFactory.create(NotificationModule);
+
+    // 모든 라우트에 'reminder' 접두사 추가
+    app.setGlobalPrefix("reminder");
 
     // Swagger 설정
     generatorSwagger(app);

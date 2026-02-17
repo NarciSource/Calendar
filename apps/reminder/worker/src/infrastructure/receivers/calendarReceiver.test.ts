@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { EventDetail } from "application/dto";
+import { Schedule } from "application/dto";
 
 import { CalendarEventReceiver } from "./calendarReceiver";
 import { CalendarClient } from "../api";
@@ -27,23 +27,23 @@ describe("CalendarEventReceiver", () => {
     });
 
     it("이벤트 세부 정보를 반환", async () => {
-        const eventDetail: EventDetail = {
-            interviewDetailId: "mock-id",
+        const schedule: Schedule = {
+            id: "mock-id",
             company: {
                 name: "mock-company",
                 location: "mock-location",
             },
-            interviewTime: new Date(),
+            date: new Date(),
             position: "mock-position",
             category: "mock-category",
             description: "mock-description",
             clientId: "mock-client-id",
         };
-        (client.get as jest.Mock).mockResolvedValue({ status: 200, data: eventDetail });
+        (client.get as jest.Mock).mockResolvedValue({ status: 200, data: schedule });
 
         const result = await receiver.receive({ event_id: "test-event-id" });
 
-        expect(result).toEqual(eventDetail);
+        expect(result).toEqual(schedule);
         expect(client.get).toHaveBeenCalledWith(null, {
             params: { interviewDetailId: "test-event-id" },
         });

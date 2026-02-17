@@ -19,16 +19,16 @@ export class CalendarClient {
      * CalendarClient 클래스의 생성자입니다.
      *
      * 이 생성자는 Axios 인스턴스를 생성하여 캘린더 API와의 통신을 설정합니다.
-     * `CALENDAR_API_URL` 환경 변수를 기반으로 기본 URL을 설정하며,
+     * `SCHEDULE_API_URL` 환경 변수를 기반으로 기본 URL을 설정하며,
      * 요청 헤더는 JSON 형식의 데이터를 수락하고 전송하도록 구성됩니다.
      *
-     * @throws {Error} `CALENDAR_API_URL` 환경 변수가 설정되지 않은 경우 오류가 발생할 수 있습니다.
+     * @throws {Error} `SCHEDULE_API_URL` 환경 변수가 설정되지 않은 경우 오류가 발생할 수 있습니다.
      */
     constructor() {
-        const CALENDAR_API_URL = process.env.CALENDAR_API_URL;
+        const SCHEDULE_API_URL = process.env.SCHEDULE_API_URL;
 
         this.instance = axios.create({
-            baseURL: CALENDAR_API_URL,
+            baseURL: SCHEDULE_API_URL,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",

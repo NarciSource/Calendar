@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 
 import { IWorkerClient, INotificationSender, IEventReceiver } from "../ports";
-import { EventDetail, NotificationStatus } from "../dto";
+import { Schedule, NotificationStatus } from "../dto";
 
 // 알림 조회 범위
 const NOTIFICATION_READ_RANGE = Number(process.env.READ_RANGE) || 60 * 60 * 1000; // 1시간
@@ -49,13 +49,13 @@ export class WorkerService {
             // 알림 내용 조회
             .map(this.receiver.receive.bind(this.receiver))
             // 발송 처리
-            .forEach(async (message: Promise<EventDetail>) => {
+            .forEach(async (message: Promise<Schedule>) => {
                 try {
                     this.sender.dispatch(await message);
                     console.log("발송 완료");
 
                     // 발송 완료 처리
-                    const { interviewDetailId: event_id } = await message;
+                    const { id: event_id } = await message;
 
                     await this.client.updatePartial({
                         event_id,

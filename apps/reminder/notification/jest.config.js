@@ -1,6 +1,4 @@
 module.exports = {
-    displayName: "notification", // 테스트 이름
-
     moduleNameMapper: {
         // 모듈 이름을 매핑
         "^domain/(.*)$": "<rootDir>/src/domain/$1",
