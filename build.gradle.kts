@@ -25,7 +25,7 @@ version = "2.2.0-SNAPSHOT"
 // Project Main Class
 // --------------------------------------
 application {
-    mainClass.set("com.pickme.calendar.CalendarApplicationKt")
+    mainClass.set("com.pickme.schedule.ScheduleApplicationKt")
 }
 
 // --------------------------------------

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: calendar
+    name: schedule
 
   config:
     import: optional:file:.env[.properties]
@@ -17,12 +17,12 @@ spring:
 
 mongock:
   migration-scan-package:
-    - com.pickme.calendar.infrastructure.migration.mongock
+    - com.pickme.schedule.infrastructure.migration.mongock
   enabled: true
 
 server:
   servlet:
-    context-path: /calendar
+    context-path: /schedule
 
 springdoc:
   api-docs:

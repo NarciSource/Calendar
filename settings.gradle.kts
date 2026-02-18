@@ -4,4 +4,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "calendar"
+rootProject.name = "schedule"

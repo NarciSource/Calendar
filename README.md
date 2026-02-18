@@ -64,13 +64,13 @@ Gateway &rarr; Backend 간 통신에는 내부 전용 JWT(Internal Token)를 사
 
 ## 📄 API 명세서
 
-[API 문서 바로가기](https://narcisource.github.io/Calendar/)
+[API 문서 바로가기](https://narcisource.github.io/Schedule/)
 
 ### API Summary
 
 > URI 기준 인덱스 표
 
-- Calendar
+- Schedule
   | Method | URI                             | Summary        |  Auth  |  Path  |  Query   | Body  | Role  |
   | ------ | ------------------------------- | -------------- | :----: | :----: | :------: | :---: | :---: |
   | GET    | `/api/v2/schedule/{scheduleId}` | 일정 조회      | Bearer | String |    -     |   -   | USER  |
@@ -125,7 +125,7 @@ Gateway &rarr; Backend 간 통신에는 내부 전용 JWT(Internal Token)를 사
 > Clean Architecture
 
 ```
-Calendar
+Schedule
 ├─ .github
 │  └─ workflows # GitHub-Actions
 │     └─ generate-openapi.yml # openapi 배포 워크플로어
@@ -140,8 +140,8 @@ Calendar
    │  ├─ application-dev.yml # 개발용 설정
    │  ├─ application-prod.yml # 배포용 설정
    │  └─ application-openapi.yml # 문서 생성용 설정
-   └─ kotlin/com/pickme/calendar
-      ├─ CalendarApplication.kt # 진입점
+   └─ kotlin/com/pickme/schedule
+      ├─ ScheduleApplication.kt # 진입점
       ├─ domain/model
       │  ├─ Schedule.kt
       │  └─ InterviewSchedule.kt
@@ -182,7 +182,7 @@ Calendar
       │  │     ├─ mapper # DTO-Entity 변환기
       │  │     │  └─ InterviewScheduleMapper.kt
       │  │     └─ controller # 컨트롤러
-      │  │        ├─ CalendarController.kt
+      │  │        ├─ ScheduleController.kt
       │  │        └─ InternalController.kt
       │  └─ outbound
       │     └─ persistence # 레포지토리 구현체
@@ -234,12 +234,12 @@ $ docker run -d \
   mongo:latest
 
 # 도커 컨테이너 빌드
-$ docker build -t calendar/server .
+$ docker build -t schedule/server .
 
 # 도커 컨테이너 실행
 $ docker run -d \
- --name calendar/server
+ --name schedule/server
  --env-file .env \
  -p 8080:8080 \
- calendar/server:latest
+ schedule/server:latest
 ```

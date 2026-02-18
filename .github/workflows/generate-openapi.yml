@@ -51,7 +51,7 @@ jobs:
       - name: Wait for server to be healthy
         run: |
           for i in {1..30}; do
-            if curl -s -f http://localhost:8080/calendar/actuator/health; then
+            if curl -s -f http://localhost:8080/schedule/actuator/health; then
               echo "Server is up"
               break
             fi
@@ -60,7 +60,7 @@ jobs:
           done
 
       - name: Generate OpenAPI spec
-        run: curl -o openapi.yaml http://localhost:8080/calendar/v3/api-docs.yaml
+        run: curl -o openapi.yaml http://localhost:8080/schedule/v3/api-docs.yaml
 
       - name: Install Redoc CLI
         run: npm install -g @redocly/cli
