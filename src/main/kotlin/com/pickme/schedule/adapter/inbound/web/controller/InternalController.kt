@@ -36,7 +36,7 @@ class InternalController(
 
     @Operation(summary = "일정 모음 조회", description = "scheduleId들에 해당하는 면접 일정 조회")
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
-    @GetMapping("/schedules")
+    @GetMapping("/")
     fun getSchedules(
         @Parameter(description = "면접 일정 ID", example = "[\"695379e58f03547bad0bc4c1\",\"695379e38f03547bad0bc4c2\"]")
         @RequestParam scheduleIds: List<String>

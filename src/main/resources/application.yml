@@ -20,10 +20,6 @@ mongock:
     - com.pickme.schedule.infrastructure.migration.mongock
   enabled: true
 
-server:
-  servlet:
-    context-path: /schedule
-
 springdoc:
   api-docs:
     path: /v3/api-docs

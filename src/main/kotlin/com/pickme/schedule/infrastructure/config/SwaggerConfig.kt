@@ -1,6 +1,5 @@
 package com.pickme.schedule.infrastructure.config
 
-import com.pickme.schedule.adapter.inbound.web.api.ApiVersions
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -49,8 +48,9 @@ class SwaggerConfig(
         return OpenAPI()
             .info(
                 Info()
-                    .title("PickMe-Schedule")
-                    .version(ApiVersions.V2)
+                    .title("일정 이벤트 관리 API")
+                    .description("API 명세서")
+                    .version("v2")
             )
             .components(
                 Components()

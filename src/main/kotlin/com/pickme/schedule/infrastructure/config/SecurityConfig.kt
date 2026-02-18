@@ -25,7 +25,6 @@ class SecurityConfig {
                     .requestMatchers(
                         "/swagger-ui/**",
                         "/v3/api-docs**",
-                        "/v3/api-docs/**",
                     ).permitAll()
 
                     // Actuator health
@@ -38,7 +37,7 @@ class SecurityConfig {
                     .hasAuthority("SCOPE_INTERNAL")
 
                     // External API
-                    .requestMatchers("/api/**")
+                    .requestMatchers("/**")
                     .authenticated()
 
                     // Default

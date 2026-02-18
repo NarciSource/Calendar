@@ -1,6 +1,5 @@
 package com.pickme.schedule.adapter.inbound.web.controller
 
-import com.pickme.schedule.adapter.inbound.web.api.ApiPaths
 import com.pickme.schedule.adapter.inbound.web.dto.request.PostScheduleDto
 import com.pickme.schedule.adapter.inbound.web.dto.request.PutScheduleDto
 import com.pickme.schedule.adapter.inbound.web.dto.request.SearchQueryDto
@@ -24,8 +23,8 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping(ApiPaths.V2)
-@Tag(name = "Schedule", description = "면접 캘린더 API")
+@RequestMapping("/")
+@Tag(name = "Schedule", description = "일정 이벤트 관리 API")
 @ApiResponse(
     responseCode = "400", description = "잘못된 요청",
     content = [Content(schema = Schema(implementation = ErrorResponseDto::class))]
@@ -47,19 +46,19 @@ class ScheduleController(
     private val scheduleMapper: InterviewScheduleMapper
 ) {
 
-    @Operation(summary = "면접 일정 조회", description = "scheduleId에 해당하는 면접 일정 조회")
+    @Operation(summary = "면접 일정 조회", description = "id에 해당하는 면접 일정 조회")
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
-    @GetMapping("/schedule/{scheduleId}")
+    @GetMapping("/{id}")
     fun getSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @PathVariable scheduleId: String
+        @PathVariable id: String
     ): ResponseEntity<ResponseDto<ScheduleDto>> {
 
         val clientId = jwt.subject
 
         val schedule = getSchedule.execute(
-            GetScheduleQuery(scheduleId, clientId)
+            GetScheduleQuery(id, clientId)
         )
 
         val scheduleDto = scheduleMapper.toDto(schedule)
@@ -71,7 +70,7 @@ class ScheduleController(
 
     @Operation(summary = "면접 일정 조건 조회", description = "조건에 해당하는 면접 일정 조회")
     @ApiResponse(responseCode = "200", description = "조회 요청 성공")
-    @GetMapping("/schedules")
+    @GetMapping("/")
     fun searchSchedules(
         @AuthenticationPrincipal jwt: Jwt,
         @ParameterObject searchQueryDto: SearchQueryDto,
@@ -93,7 +92,7 @@ class ScheduleController(
 
     @Operation(summary = "면접 일정 추가", description = "새로운 면접 일정 추가")
     @ApiResponse(responseCode = "200", description = "면접 일정 추가 성공")
-    @PostMapping("/schedule")
+    @PostMapping("/")
     fun createSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Valid @RequestBody postScheduleDto: PostScheduleDto
@@ -112,13 +111,13 @@ class ScheduleController(
         )
     }
 
-    @Operation(summary = "면접 일정 수정", description = "scheduleId에 해당하는 면접 일정 수정")
+    @Operation(summary = "면접 일정 수정", description = "id에 해당하는 면접 일정 수정")
     @ApiResponse(responseCode = "200", description = "면접 일정 수정 성공")
-    @PutMapping("/schedule/{scheduleId}")
+    @PutMapping("/{id}")
     fun updateSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @PathVariable scheduleId: String,
+        @PathVariable id: String,
         @Valid @RequestBody putScheduleDto: PutScheduleDto
     ): ResponseEntity<ResponseDto<Nothing>> {
 
@@ -126,7 +125,7 @@ class ScheduleController(
         val changes = scheduleMapper.toEntity(putScheduleDto)
 
         updateSchedule.execute(
-            UpdateScheduleCommand(changes, scheduleId, clientId)
+            UpdateScheduleCommand(changes, id, clientId)
         )
 
         return ResponseEntity.ok(
@@ -135,19 +134,19 @@ class ScheduleController(
     }
 
     // 면접 일정 삭제
-    @Operation(summary = "면접 일정 삭제", description = "scheduleId에 해당하는 면접 일정 삭제")
+    @Operation(summary = "면접 일정 삭제", description = "id에 해당하는 면접 일정 삭제")
     @ApiResponse(responseCode = "200", description = "면접 일정 삭제 성공")
-    @DeleteMapping("/schedule/{scheduleId}")
+    @DeleteMapping("/{id}")
     fun deleteSchedule(
         @AuthenticationPrincipal jwt: Jwt,
         @Parameter(description = "면접 일정 ID", example = "694d1d9462a47e4039250532")
-        @PathVariable scheduleId: String
+        @PathVariable id: String
     ): ResponseEntity<ResponseDto<Nothing>> {
 
         val clientId = jwt.subject
 
         deleteSchedule.execute(
-            DeleteScheduleCommand(scheduleId, clientId)
+            DeleteScheduleCommand(id, clientId)
         )
 
         return ResponseEntity.ok(
