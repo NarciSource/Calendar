@@ -1,9 +1,7 @@
 import { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
-const server_url = `http://${process.env.PUBLIC_BASE_DOMAIN}:${process.env.PUBLIC_BASE_PORT}/reminder`;
 const browser_access_url = `http://${process.env.PUBLIC_BASE_DOMAIN}:${process.env.PUBLIC_BASE_PORT}/auth/realms/dev`;
-const redirect_uri = `${server_url}/swagger-ui/oauth2-redirect.html`;
 const client_id = process.env.KEYCLOAK_CLIENT_ID;
 
 /**
@@ -15,7 +13,7 @@ const client_id = process.env.KEYCLOAK_CLIENT_ID;
  * @remarks
  * - Swagger 설정은 `DocumentBuilder`를 사용하여 구성됩니다.
  * - Bearer 인증 방식이 추가됩니다.
- * - 생성된 Swagger 문서는 `/api` 경로에서 UI로 접근할 수 있습니다.
+ * - 생성된 Swagger 문서는 `/swagger-ui` 경로에서 UI로 접근할 수 있습니다.
  */
 export default function generatorSwagger(app: INestApplication<any>) {
     const oauth_scheme_name = "OAuth2";
@@ -25,7 +23,6 @@ export default function generatorSwagger(app: INestApplication<any>) {
         .setTitle("알림 API")
         .setDescription("API 명세서")
         .setVersion("v1")
-        .addServer(server_url)
 
         .addOAuth2(
             {
@@ -49,9 +46,8 @@ export default function generatorSwagger(app: INestApplication<any>) {
     const document = SwaggerModule.createDocument(app, swagger_config);
 
     // Swagger UI 설정
-    SwaggerModule.setup("reminder/swagger-ui", app, document, {
+    SwaggerModule.setup("swagger-ui", app, document, {
         swaggerOptions: {
-            oauth2RedirectUrl: redirect_uri,
             persistAuthorization: true,
 
             initOAuth: {
@@ -60,6 +56,7 @@ export default function generatorSwagger(app: INestApplication<any>) {
                 scopes: ["openid"],
             },
         },
+        jsonDocumentUrl: "v3/api-docs",
     });
 
     return document;
