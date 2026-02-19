@@ -3,7 +3,7 @@ services:
     image: calendar/schedule-api:${SCHEDULE_API_VERSION}
     container_name: schedule-api
     build:
-      context: apps/schedule-api
+      context: apps/schedule
       dockerfile: Dockerfile
 
     networks:
@@ -13,7 +13,7 @@ services:
         condition: service_healthy
 
     env_file:
-      - apps/schedule-api/.env
+      - apps/schedule/.env
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - PUBLIC_BASE_DOMAIN=${PUBLIC_BASE_DOMAIN}

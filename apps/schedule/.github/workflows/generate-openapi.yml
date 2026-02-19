@@ -1,0 +1,84 @@
+name: Generate Openapi
+
+on:
+  workflow_dispatch: # 수동 실행
+  push:
+    tags: # 태그가 푸시될 때만 실행
+      - "v*.*.*"
+
+permissions:
+  contents: write # 레포지토리 콘텐츠에 대한 쓰기 권한
+  actions: read # 액션에 대한 읽기 권한
+  pull-requests: write
+
+jobs:
+  generate-openapi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build Spring Boot JAR
+        run: ./gradlew bootJar
+
+      - name: Start Spring Boot with OpenAPI profile
+        env:
+          SPRING_PROFILES_ACTIVE: openapi
+        run: |
+          java -jar build/libs/*.jar > server.log 2>&1 &
+          echo $! > spring.pid
+
+          tail -n 20 -f server.log &
+
+      - name: Wait for server to be healthy
+        run: |
+          for i in {1..30}; do
+            if curl -s -f http://localhost:8080/schedule/actuator/health; then
+              echo "Server is up"
+              break
+            fi
+            echo "Waiting for server..."
+            sleep 2
+          done
+
+      - name: Generate OpenAPI spec
+        run: curl -o openapi.yaml http://localhost:8080/schedule/v3/api-docs.yaml
+
+      - name: Install Redoc CLI
+        run: npm install -g @redocly/cli
+
+      - name: Build Redoc HTML
+        run: npx @redocly/cli build-docs openapi.yaml -o index.html
+
+      - name: Prepare Swagger UI for GitHub Pages
+        run: |
+          mkdir -p swagger-ui
+          mv index.html swagger-ui/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./swagger-ui
+
+      - name: Stop Spring Boot server
+        if: always()
+        run: kill $(cat spring.pid)
