@@ -52,25 +52,24 @@ services:
     routes:
       - name: schedule-route      # 라우트 이름: 서비스에 연결될 URL 패턴
         paths:
-          - /calendar             # 하위 모든 경로를 이 라우트가 처리
+          - /api/v1/schedule      # 하위 모든 경로를 이 라우트가 처리
         protocols:
           - http                  # HTTP 요청 허용
           - https                 # HTTPS 요청 허용
-        strip_path: false         # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
+        strip_path: true          # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
         preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
         plugins:
           - name: external-auth
             config:
               url: http://oauth2-proxy:4180/auth
 
-      - name: schedule-swagger-ui-route
+      - name: schedule-api-docs-route
         paths:
-          - /calendar/swagger-ui.html
-          - /calendar/v3/api-docs
+          - /docs/schedule
         protocols:
           - http
           - https
-        strip_path: false
+        strip_path: true
         preserve_host: true
 
   - name: reminder-api
@@ -78,25 +77,24 @@ services:
     routes:
       - name: reminder-route
         paths:
-          - /reminder
+          - /api/v1/reminder
         protocols:
           - http
           - https
-        strip_path: false
+        strip_path: true
         preserve_host: false
         plugins:
           - name: external-auth
             config:
               url: http://oauth2-proxy:4180/auth
 
-      - name: reminder-swagger-ui-route
+      - name: reminder-api-docs-route
         paths:
-          - /reminder/swagger-ui.html
-          - /reminder/v3/api-docs
+          - /docs/reminder
         protocols:
           - http
           - https
-        strip_path: false
+        strip_path: true
         preserve_host: true
 
   - name: web
