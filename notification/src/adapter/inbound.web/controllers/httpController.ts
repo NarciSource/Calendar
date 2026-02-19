@@ -11,7 +11,7 @@ import {
 } from "application/commands";
 import { CreateRequestDTO, ReadRequestDTO, UpdateRequestDTO, ParametersDTO } from "../dtos";
 
-@Controller("/reminder/")
+@Controller("/")
 @ApiTags("HTTP API")
 @ApiResponse({ status: 401, description: "권한 없음" })
 @ApiResponse({ status: 400, description: "입력 값 오류" })
