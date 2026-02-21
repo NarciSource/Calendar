@@ -1,0 +1,14 @@
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v5.32.0
+    container_name: swagger-ui
+
+    networks:
+      - net
+    environment:
+      - CONFIG_URL=/swagger-ui/swagger-config.json
+      - OAUTH_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - OAUTH_USE_PKCE=true
+      - OAUTH_SCOPES=openid
+    volumes:
+      - ./swagger-ui/config.json:/usr/share/nginx/html/swagger-config.json

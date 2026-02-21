@@ -1,0 +1,13 @@
+{
+  "urls": [
+    {
+      "name": "Schedule API",
+      "url": "http://localhost:8080/docs/schedule/v3/api-docs"
+    },
+    {
+      "name": "Reminder API",
+      "url": "http://localhost:8080/docs/reminder/v3/api-docs"
+    }
+  ],
+  "urlsPrimaryName": "Schedule API"
+}

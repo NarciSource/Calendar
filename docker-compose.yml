@@ -100,6 +100,7 @@ services:
 
 include:
   - ./infra/docker-compose.yml
+  - ./tools/docker-compose.yml
 
 networks:
   net:
