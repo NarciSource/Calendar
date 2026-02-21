@@ -5,3 +5,7 @@ services:
 
     networks:
       - net
+    environment:
+      - CONFIG_URL=/swagger-ui/swagger-config.json
+    volumes:
+      - ./swagger-ui/config.json:/usr/share/nginx/html/swagger-config.json
