@@ -76,6 +76,10 @@ services:
           - https
         strip_path: true
         preserve_host: true
+        plugins:
+          - name: openapi-prefix
+            config:
+              prefix: /api/v1/schedule
 
   - name: reminder-api
     host: reminder-upstream
@@ -101,6 +105,10 @@ services:
           - https
         strip_path: true
         preserve_host: true
+        plugins:
+          - name: openapi-prefix
+            config:
+              prefix: /api/v1/reminder
 
   - name: swagger-ui
     host: swagger-ui-upstream
