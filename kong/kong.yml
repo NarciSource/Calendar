@@ -23,6 +23,11 @@ upstreams:
       - target: reminder-api:3004
         weight: 100
 
+  - name: swagger-ui-upstream
+    targets:
+      - target: swagger-ui:8080
+        weight: 100
+
   - name: web-dev-upstream
     targets:
       - target: web-dev:4105
@@ -91,6 +96,18 @@ services:
       - name: reminder-api-docs-route
         paths:
           - /docs/reminder
+        protocols:
+          - http
+          - https
+        strip_path: true
+        preserve_host: true
+
+  - name: swagger-ui
+    host: swagger-ui-upstream
+    routes:
+      - name: swagger-ui-route
+        paths:
+          - /swagger-ui
         protocols:
           - http
           - https
