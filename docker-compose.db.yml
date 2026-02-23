@@ -1,0 +1,55 @@
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+
+    networks:
+      - net
+    ports:
+      - ${MONGODB_PORT}:27017
+
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
+    volumes:
+      - ./mongo/init:/docker-entrypoint-initdb.d
+      - mongo-data:/data/db
+
+    healthcheck:
+      test: >
+        mongosh --quiet
+        -u ${MONGODB_USERNAME}
+        -p ${MONGODB_PASSWORD}
+        --authenticationDatabase admin
+        --eval "db.adminCommand('ping').ok"
+
+  dynamodb:
+    image: amazon/dynamodb-local:3.1.0
+    container_name: dynamodb
+
+    command: >
+      -jar DynamoDBLocal.jar
+      -sharedDb
+      -dbPath /home/dynamodblocal/data
+
+    networks:
+      - net
+    ports:
+      - ${DYNAMODB_PORT}:8000
+
+    volumes:
+      - dynamo-data:/home/dynamodblocal/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongo-data:
+    driver: local
+  dynamo-data:
+    driver: local
