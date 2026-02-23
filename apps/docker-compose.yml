@@ -1,0 +1,99 @@
+services:
+  schedule-api:
+    image: calendar/schedule-api:${SCHEDULE_API_VERSION}
+    container_name: schedule-api
+    build:
+      context: schedule
+      dockerfile: Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+    env_file:
+      - schedule/.env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - PUBLIC_BASE_DOMAIN=${PUBLIC_BASE_DOMAIN}
+      - PUBLIC_BASE_PORT=${PUBLIC_BASE_PORT}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8080/calendar/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  reminder-api:
+    image: calendar/reminder-api:${REMINDER_API_VERSION}
+    container_name: reminder-api
+    build:
+      context: reminder
+      dockerfile: ./notification/Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+
+    env_file:
+      - reminder/.env
+      - reminder/.env.local
+      - reminder/notification/.env
+      - reminder/notification/.env.local
+    environment:
+      - DB_HOST=dynamodb
+      - PUBLIC_BASE_DOMAIN=${PUBLIC_BASE_DOMAIN}
+      - PUBLIC_BASE_PORT=${PUBLIC_BASE_PORT}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://localhost:3004/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  reminder-worker:
+    image: calendar/reminder-worker:${REMINDER_WORKER_VERSION}
+    container_name: reminder-worker
+    build:
+      context: reminder
+      dockerfile: ./worker/Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      - reminder-api
+    env_file:
+      - reminder/.env
+      - reminder/.env.local
+      - reminder/worker/.env
+      - reminder/worker/.env.local
+    environment:
+      - MS_HOST=reminder-api
+
+  web-dev:
+    image: calendar/web-dev:${WEB_VERSION}
+    container_name: web-dev
+    build:
+      context: web
+      dockerfile: Dockerfile.dev
+
+    networks:
+      - net
+    env_file:
+      - web/.env
+    
+    volumes:
+      - ./web:/app
+      - /app/node_modules
