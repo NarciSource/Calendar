@@ -1,26 +1,33 @@
 _format_version: "2.1"            # Kong declarative config 버전
 
+# =========================
+# Upstreams (로드밸런싱 그룹)
+# =========================
 upstreams:
-  - name: oauth2-proxy-upstream
-    algorithm: round-robin
+
+  - name: oauth2-proxy-upstream   # Upstream 이름: 여러 서버(Target)를 묶어 로드밸런싱하는 그룹
     targets:
-      - target: oauth2-proxy:4180
-        weight: 100
+      - target: oauth2-proxy:4180 # 실제 요청을 받을 서버 호스트:포트
+        weight: 100               # 로드밸런싱 시 해당 서버에 부여할 가중치 (높을수록 요청 비중 증가)
 
   - name: keycloak-upstream
-    algorithm: round-robin
     targets:
       - target: keycloak:8080
         weight: 100
 
-  - name: schedule-upstream       # Upstream 이름: 여러 서버(Target)를 묶어 로드밸런싱하는 그룹
+  - name: schedule-upstream
     targets:
-      - target: schedule-api:8080 # 실제 요청을 받을 서버 호스트:포트
-        weight: 100               # 로드밸런싱 시 해당 서버에 부여할 가중치 (높을수록 요청 비중 증가)
+      - target: schedule-api:8080
+        weight: 100
 
   - name: reminder-upstream
     targets:
       - target: reminder-api:3004
+        weight: 100
+
+  - name: swagger-ui-upstream
+    targets:
+      - target: swagger-ui:8080
         weight: 100
 
   - name: web-dev-upstream
@@ -28,90 +35,129 @@ upstreams:
       - target: web-dev:4105
         weight: 100
 
+# =========================
+# Services
+# =========================
 services:
-  - name: oauth2-proxy
-    host: oauth2-proxy-upstream
-    routes:
-      - name: oauth2-proxy-route
-        paths:
-          - /oauth2
-        strip_path: false
-        preserve_host: true
+
+  - name: oauth2-proxy            # 서비스 이름: 클라이언트가 접근할 논리적 API
+    host: oauth2-proxy-upstream   # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
 
   - name: keycloak
     host: keycloak-upstream
-    routes:
-      - name: keycloak-route
-        paths:
-          - /auth
-        strip_path: false
-        preserve_host: false
 
-  - name: schedule-api            # 서비스 이름: 클라이언트가 접근할 논리적 API
-    host: schedule-upstream       # 서비스가 연결할 Upstream 이름 (또는 직접 호스트)
-    routes:
-      - name: schedule-route      # 라우트 이름: 서비스에 연결될 URL 패턴
-        paths:
-          - /calendar             # 하위 모든 경로를 이 라우트가 처리
-        protocols:
-          - http                  # HTTP 요청 허용
-          - https                 # HTTPS 요청 허용
-        strip_path: false         # Kong이 upstream으로 전달할 때 라우트 경로를 제거하지 않음
-        preserve_host: true       # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
-        plugins:
-          - name: external-auth
-            config:
-              url: http://oauth2-proxy:4180/auth
-
-      - name: schedule-swagger-ui-route
-        paths:
-          - /calendar/swagger-ui.html
-          - /calendar/v3/api-docs
-        protocols:
-          - http
-          - https
-        strip_path: false
-        preserve_host: true
+  - name: schedule-api
+    host: schedule-upstream
 
   - name: reminder-api
     host: reminder-upstream
-    routes:
-      - name: reminder-route
-        paths:
-          - /reminder
-        protocols:
-          - http
-          - https
-        strip_path: false
-        preserve_host: false
-        plugins:
-          - name: external-auth
-            config:
-              url: http://oauth2-proxy:4180/auth
 
-      - name: reminder-swagger-ui-route
-        paths:
-          - /reminder/swagger-ui.html
-          - /reminder/v3/api-docs
-        protocols:
-          - http
-          - https
-        strip_path: false
-        preserve_host: true
+  - name: swagger-ui
+    host: swagger-ui-upstream
 
   - name: web
     host: web-dev-upstream
-    routes:
-      - name: web-route
-        paths:
-          - /
-        protocols:
-          - http
-          - https
-        strip_path: false
-        preserve_host: true
 
+# =========================
+# Routes
+# =========================
+routes:
+
+  # =========================
+  # OIDC
+  # =========================
+  - name: oauth2-proxy-route      # 라우트 이름: 서비스에 연결될 URL 패턴
+    service: oauth2-proxy         # 라우터가 연결할 서비스
+    paths:                        # 하위 모든 경로를 이 라우트가 처리
+      - /oauth2
+    protocols:
+      - http                      # HTTP 요청 허용
+      - https                     # HTTPS 요청 허용
+    strip_path: false             # upstream으로 전달할 때 라우트 경로를 제거 여부
+    preserve_host: true           # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+
+  - name: keycloak-route
+    service: keycloak
+    paths:
+      - /auth
+    strip_path: false
+    preserve_host: false
+
+  # =========================
+  # Schedule API
+  # =========================
+  - name: schedule-route
+    service: schedule-api
+    paths:
+      - /api/v1/schedule
+    strip_path: true 
+    preserve_host: true
+    plugins:
+      - name: external-auth
+        config:
+          url: http://oauth2-proxy:4180/auth
+
+  # =========================
+  # Reminder API
+  # =========================
+  - name: reminder-route
+    service: reminder-api
+    paths:
+      - /api/v1/reminder
+    strip_path: true
+    preserve_host: false
+    plugins:
+      - name: external-auth
+        config:
+          url: http://oauth2-proxy:4180/auth
+
+  # =========================
+  # Swagger Docs
+  # =========================
+  - name: swagger-ui-route
+    service: swagger-ui
+    paths:
+      - /swagger-ui
+    strip_path: true
+    preserve_host: true
+
+  - name: schedule-api-docs-route
+    service: schedule-api
+    paths:
+      - /docs/schedule
+    strip_path: true
+    preserve_host: true
+    plugins:
+      - name: openapi-prefix
+        config:
+          prefix: /api/v1/schedule
+
+  - name: reminder-api-docs-route
+    service: reminder-api
+    paths:
+      - /docs/reminder
+    strip_path: true
+    preserve_host: true
+    plugins:
+      - name: openapi-prefix
+        config:
+          prefix: /api/v1/reminder
+
+  # =========================
+  # Web Frontend
+  # =========================
+  - name: web-route
+    service: web
+    paths:
+      - /
+    strip_path: false
+    preserve_host: true
+
+# =========================
+# Global Plugins
+# =========================
 plugins:
+
   - name: custom-field-log
     config:
       path: /dev/stdout

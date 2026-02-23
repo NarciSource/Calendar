@@ -49,8 +49,9 @@
       ],
       "redirectUris": [
         "/oauth2/callback",
-        "/calendar/swagger-ui/oauth2-redirect.html",
-        "/reminder/swagger-ui/oauth2-redirect.html"
+        "/schedule/swagger-ui/oauth2-redirect.html",
+        "/reminder/swagger-ui/oauth2-redirect.html",
+        "/swagger-ui*"
       ]
     }
   ],
