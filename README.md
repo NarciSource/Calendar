@@ -33,6 +33,10 @@
 [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/) 
 [![Github Actions](https://img.shields.io/badge/Github_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/features/actions)  
 
+## 아키텍처
+
+![architecture](https://github.com/user-attachments/assets/62644b89-7410-48a9-9a42-bff599eb06c8)
+
 ## 폴더 구조
 
 <details>
